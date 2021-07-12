@@ -10,8 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:template-code.helloWorld",
-    "onCommand:template-code.testEditorCommand"
+    "*"
+ 
   ],
   "main": "./extension.js",
   "contributes": {
@@ -21,17 +21,17 @@
         "title": "🤓Hello World"
       },
       {
-        "command": "template-code.getCurrentFilePath",
-        "title": "获取文件"
+        "command": "template-code.createFilePath",
+        "title": "创建模板文件"
       },
       {
         "command": "template-code.testEditorCommand",
-        "title": "文本编辑"
+        "title": "拉取模板"
       }
     ],
     "keybindings": [
       {
-        "command": "template-code.helloWorld",
+        "command": "template-code.testEditorCommand",
         "key": "ctrl+q",
         "mac": "ctrl+q",
         "when": "editorTextFocus"
@@ -43,11 +43,16 @@
           "when": "editorFocus",
           "command": "template-code.helloWorld",
           "group": "navigation"
+        },
+        {
+          "when": "editorFocus",
+          "command": "template-code.testEditorCommand",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "template-code.getCurrentFilePath",
+          "command": "template-code.createFilePath",
           "group": "navigation"
         }
       ]
@@ -56,7 +61,7 @@
       "templateCode.yourName": {
         "type": "string",
         "default": "guest",
-        "description": "你的名字" 
+        "description": "你的名字"
       },
       "templateCode.showTip": {
         "type": "boolean",
