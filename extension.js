@@ -9,8 +9,7 @@ const regular = require("./utils/Regular");
 const RootPath = path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode");
 const axios = require("./utils/axios");
 // const templateFolder = require("./template/template-folder");
-const templateFolderPath = path.resolve(__dirname, "template", "template-folder.js");
-const { log } = require("console");
+const templateFolderPath = path.resolve(__dirname, "template", "template-folder.js"); // 默认的模板路径 存在插件 写入客户端
 
 /**
  */
@@ -21,11 +20,18 @@ async function rootResolvePath(fileName = "template-folder.js") {
   let templatePathUri = vscode.Uri.file(RootPath + "/" + fileName); // 写入的文件路径
   let enable = fs.existsSync(RootPath);
   // 没有的话创建模板文件夹
+  console.log(enable, "创建了.vscode嘛");
   if (!enable) {
     await vscode.workspace.fs.createDirectory(vscode.Uri.file(`${RootPath}`));
     // 创建模板文件
-    const document = await vscode.workspace.openTextDocument(templateFolderPath);
-    vscode.workspace.fs.writeFile(templatePathUri, strUtils.stringToUint8Array(document.getText()));
+  } else {
+    // 是否有模板文件
+    let isTemplate = fs.existsSync(path.resolve(RootPath, "template-folder.js"));
+    console.log('有内置模板文件嘛',isTemplate);
+    if (!isTemplate) {
+      const document = await vscode.workspace.openTextDocument(templateFolderPath);
+      vscode.workspace.fs.writeFile(templatePathUri, strUtils.stringToUint8Array(document.getText()));
+    }
   }
   return enable;
 }
@@ -35,7 +41,7 @@ async function rootResolvePath(fileName = "template-folder.js") {
  */
 
 async function createTemplateFile(uri) {
-  let isFileOrFolder = regular.isFileOrFolder(uri);
+  let isFileOrFolder = regular.isFileOrFolder(uri); // 判断是否文件夹
   if (isFileOrFolder) return window.showErrorMessage("请右键点击文件夹进行操作");
   const InputName = await window.showInputBox({
     placeHolder: `会根据${"组件模板"}来生成文件`,
@@ -73,9 +79,8 @@ async function shareCode(textEditor) {
   const textContent = textEditor.document.getText(textRange); // 获取选中的文本内容
   if (!textContent) return window.showErrorMessage("你在逗我？没有选中内容你分享个锤锤！");
   console.log(textContent);
-  axios.post({ msgtype: "text", text: { content: `
-  结合vscode插件推送到代码片段到群机器人🤖
-  ${textContent}`,mentioned_list: ["王港"], mentioned_mobile_list: ["16607491196"] }});
+  axios.post({ msgtype: "text", msgContent: { content: `机器人向你分享一段代码🤖：
+  ${textContent} `,mentioned_list: ["王港"], mentioned_mobile_list: ["16607491196"] }});
 }
 
 /**

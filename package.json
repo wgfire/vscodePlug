@@ -56,16 +56,23 @@
         }
       ]
     },
-    "properties": {
-      "templateCode.yourName": {
-        "type": "string",
-        "default": "guest",
-        "description": "你的名字"
-      },
-      "templateCode.showTip": {
-        "type": "boolean",
-        "default": true,
-        "description": "是否在每次启动时显示欢迎提示！"
+    "configuration": {
+      "title": "shared",
+      "properties": {
+        "shared.webhook": {
+          "type": "string",
+          "default": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6d3ec4c8-6e80-46d5-bb78-b593496cdf11",
+          "description": "webhook地址"
+        },
+        "shared.sharedType": {
+          "type": "string",
+          "default": "text",
+          "description": "分享代码的默认类型",
+          "enum": [
+            "markdown",
+            "text"
+          ]
+        }
       }
     }
   },
