@@ -4,6 +4,10 @@ const isFileOrFolder = function (path) {
   return reg.test(path);
 };
 
+
 module.exports = {
   isFileOrFolder,
 };
+/**
+ * 
+ */

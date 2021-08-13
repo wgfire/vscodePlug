@@ -1,0 +1,8 @@
+{
+  "@review": {
+    "scope": "javascript,typescript,css,scss,typescriptreact,vue",
+    "prefix": "@review",
+    "body": ["/**", "*@reviewType -- bug", "*@review user", "*/"],
+    "description": "review template"
+  }
+}
