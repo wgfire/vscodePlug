@@ -1,12 +1,12 @@
 const vscode = require("vscode");
+const Decoration = require('./decoration')
 /**
  * 自动提示实现，
  * @param {*} document
  * @param {*} position
- * @param {*} token
  * @param {*} context
  */
-function provideCompletionItems(document, position, token, context) {
+function provideCompletionItems(document, position, context) {
   const line = document.lineAt(position);
   //const projectPath = util.getProjectPath(document);
 
@@ -14,7 +14,7 @@ function provideCompletionItems(document, position, token, context) {
   const lineText = line.text.substring(0, position.character);
   // 简单匹配，只要当前光标前的字符串为`this.dependencies.`都自动带出所有的依赖
   if (/@review\.$/g.test(lineText)) {
-    console.log("字符串注册",lineText);
+    console.log("字符串注册", lineText);
     //const json = require(`${projectPath}/package.json`);
     const dependencies = ["Bugs", "optimization", "specification"]; //Object.keys(json.dependencies || {}).concat(Object.keys(json.devDependencies || {}));
     //   return [new vscode.CompletionItem("@review", vscode.CompletionItemKind.Snippet)];
@@ -35,16 +35,22 @@ function resolveCompletionItem(item, token) {
   return null;
 }
 
+const TYPES = ["vue", "css", "less", "scss", "sass", "stylus", "javascript", "javascriptreact", "typescriptreact", "typescript"];
 module.exports = function (context) {
   // 注册代码建议提示，只有当按下“.”时才触发
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      "javascript",
+  new Decoration();
+  TYPES.forEach((el) => {
+    let providerDisposable = vscode.languages.registerCompletionItemProvider(
+      {
+        scheme: "file",
+        language: el,
+      },
       {
         provideCompletionItems,
         resolveCompletionItem,
       },
       "."
-    )
-  );
+    );
+    context.subscriptions.push(providerDisposable);
+  });
 };
