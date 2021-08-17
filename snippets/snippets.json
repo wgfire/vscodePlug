@@ -2,7 +2,7 @@
   "@review": {
     "scope": "javascript,typescript,css,scss,typescriptreact,vue",
     "prefix": "@review",
-    "body": ["/**", "*@reviewType -- bug", "*@review user", "*/"],
+    "body": ["/**", "*@reviewType -- Perf", "*@reviewContent","1.","*/"],
     "description": "review template"
   }
 }
