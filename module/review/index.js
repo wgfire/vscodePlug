@@ -1,5 +1,5 @@
 const vscode = require("vscode");
-const Decoration = require('./decoration')
+const Decoration = require("./decoration");
 /**
  * 自动提示实现，
  * @param {*} document
@@ -13,11 +13,10 @@ function provideCompletionItems(document, position, context) {
   // 只截取到光标位置为止，防止一些特殊情况
   const lineText = line.text.substring(0, position.character);
   // 简单匹配，只要当前光标前的字符串为`this.dependencies.`都自动带出所有的依赖
-  if (/@review\.$/g.test(lineText)) {
+  if (/\*@reviewType\.$/g.test(lineText)) {
     console.log("字符串注册", lineText);
     //const json = require(`${projectPath}/package.json`);
-    const dependencies = ["Bugs", "optimization", "specification"]; //Object.keys(json.dependencies || {}).concat(Object.keys(json.devDependencies || {}));
-    //   return [new vscode.CompletionItem("@review", vscode.CompletionItemKind.Snippet)];
+    const dependencies = ["Perf", "Format", "Bug"]; //Object.keys(json.dependencies || {}).concat(Object.keys(json.devDependencies || {}));
     return dependencies.map((dep) => {
       // vscode.CompletionItemKind 表示提示的类型
       console.log(dep);

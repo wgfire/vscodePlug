@@ -5,14 +5,40 @@ const vscode = require("vscode");
 const { window, workspace, Range } = vscode;
 const DecorationType = window.createTextEditorDecorationType({
   border: "1px",
-  borderStyle: "solid",
-  borderColor: "#fff",
-  backgroundColor: "blue",
+  borderStyle: "dotted", //"solid",
+  borderColor: "#52ACFF",
+  backgroundColor: "#52ACFF",
+  color: "white",
 });
+
+const DecorationTypes = {
+  Perf: window.createTextEditorDecorationType({
+    border: "1px",
+    borderStyle: "dotted", //"solid",
+    borderColor: "#08AEEA",
+    backgroundColor: "#08AEEA",
+    color: "white",
+  }),
+  Bug: window.createTextEditorDecorationType({
+    border: "1px",
+    borderStyle: "dotted", //"solid",
+    borderColor: "#F76B1C",
+    backgroundColor: "#F76B1C",
+    color: "white",
+  }),
+  Format: window.createTextEditorDecorationType({
+    border: "1px",
+    borderStyle: "dotted", //"solid",
+    borderColor: "#FBAB7E",
+    backgroundColor: "#FBAB7E",
+    color: "white",
+  }),
+};
+
 class Decoration {
   constructor() {
     this.editor = window.activeTextEditor;
-    this.regS = /(\*@reviewContent)\s+(.*\s)+(\*\/)/g    ///\w*-- Perf/g;
+    this.regS = [/\.[Perf|Bug|Format]+/g, /(?<=\*@reviewContent(\s\S)?)([\S\s]*?)(?=\*\/)/g]; ///\w*-- Perf/g;
     this.timeout = null;
     this.reviewType = []; // 为review类型添加颜色
     this.reviewContent = []; // @ReviewContent内容添加颜色
@@ -53,24 +79,37 @@ class Decoration {
     let doc = this.editor.document;
     let text = doc.getText();
     let match;
-  
-    while ((match = this.regS.exec(text))) {
-      // 获取数字开始和结束的位置
-      const startPos = doc.positionAt(match.index);
-      const endPos = doc.positionAt(match.index + match[0].length);
-      const line = new vscode.Position(match.index,match.index + match[0].length)
-      console.log("开始寻找",line);
-      // 下面有截图 主要是获取数字的位置范围，并且当鼠标覆盖时，有我们想要的文字展示
-      const decoration = {
-        range: new Range(startPos, endPos),
-      };
-      this.reviewType.push(decoration);
-    }
-    console.log("截取到的字符", this.reviewType);
+
+    this.regS.forEach((reg, index) => {
+      let type = "Perf";
+
+      while ((match = reg.exec(text))) {
+        // 获取数字开始和结束的位置
+        const startPos = doc.positionAt(match.index + 1);
+        const endPos = doc.positionAt(match.index + match[0].length);
+        const line = new vscode.Position(match.index, match.index + match[0].length);
+        console.log("开始寻找", doc.getText(new Range(startPos, endPos)));
+        // 当匹配第一个的时候 确定当前的主题色
+        if (index === 0) type = doc.getText(new Range(startPos, endPos));
+        const decoration = {
+          range: new Range(startPos, endPos),
+        };
+        // this.review = {
+        //   type: DecorationTypes[type] ? DecorationTypes[type] : DecorationTypes["Perf"],
+        //   rangs: [],
+        // };
+        this.reviewType.push(decoration);
+      }
+
+      console.log("截取到的字符", this.reviewType);
+    });
   }
 
   setDecoration() {
     this.findEditeContent();
+    // this.reviewType.forEach((el) => {
+    //   this.editor.setDecorations(el.type, el.rangs);
+    // });
     this.editor.setDecorations(DecorationType, this.reviewType);
   }
 }

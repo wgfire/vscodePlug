@@ -1,7 +1,7 @@
 const axios = require("../utils/axios");
 const vscode = require("vscode");
 const { window } = vscode;
- async function shareCode(textEditor) {
+async function shareCode(textEditor) {
   const start_row = textEditor.selection.start.line;
   const start_column = textEditor.selection.start.character;
   const end_row = textEditor.selection.end.line;
@@ -21,4 +21,4 @@ const { window } = vscode;
   });
 }
 
-module.exports=shareCode
+module.exports = shareCode;

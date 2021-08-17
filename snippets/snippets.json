@@ -2,7 +2,7 @@
   "@review": {
     "scope": "javascript,typescript,css,scss,typescriptreact,vue",
     "prefix": "@review",
-    "body": ["/**", "*@reviewType -- Perf", "*@reviewContent","1.","*/"],
+    "body": ["/**", "*@reviewType.Perf", "*@reviewContent Buy 王港", "1.", "*/"],
     "description": "review template"
   }
 }
