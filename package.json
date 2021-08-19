@@ -22,8 +22,8 @@
     ],
     "commands": [
       {
-        "command": "template-code.helloWorld",
-        "title": "🤓Hello World"
+        "command": "template-code.clearCD",
+        "title": "🤓清空console/debugger"
       },
       {
         "command": "template-code.createFilePath",
@@ -40,13 +40,19 @@
         "key": "ctrl+q",
         "mac": "ctrl+q",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "template-code.clearCD",
+        "key": "ctrl+d",
+        "mac": "ctrl+d",
+        "when": "editorTextFocus"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "when": "editorFocus",
-          "command": "template-code.helloWorld",
+          "command": "template-code.clearCD",
           "group": "navigation"
         },
         {
