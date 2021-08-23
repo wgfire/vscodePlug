@@ -4,11 +4,9 @@
 const vscode = require("vscode");
 const { window, workspace, Range } = vscode;
 const DecorationType = window.createTextEditorDecorationType({
-  border: "1px",
-  borderStyle: "dotted", //"solid",
-  borderColor: "#52ACFF",
-  backgroundColor: "#52ACFF",
-  color: "white",
+  borderColor: vscode.ThemeColor,
+  backgroundColor: vscode.ThemeColor,
+  color: vscode.Color,
 });
 /**
  * 每一个主题的所对应的颜色
@@ -85,6 +83,16 @@ class Decoration {
     // 初始化数据。
     this.reviewType = [];
     this.reviewContent = [];
+    this.initDecoration();
+  }
+  initDecoration() {
+    console.log("初始化", "xx");
+    this.reviewType.forEach((el) => {
+      //const DecorationType = DecorationTypes[el.type];
+
+      this.editor.setDecorations(DecorationType, el.decoration);
+    });
+    return false;
   }
   // 根据正则指定的内容
   findEditeContent() {
@@ -131,7 +139,7 @@ class Decoration {
    */
   setDecoration() {
     // 先对数组从小到大排序
-    if (this.reviewType.length > 0) return false;
+    if (this.reviewType.length <= 0) return this.initDecoration();
     this.reviewType.sort((a, b) => {
       return a.decoration.range._start._line - b.decoration.range._start._line;
     });
@@ -150,14 +158,15 @@ class Decoration {
 
       tempArray.push(tempObj);
     }
+    this.reviewType = tempArray;
 
-    tempArray.forEach((el) => {
+    this.reviewType.forEach((el) => {
       const DecorationType = DecorationTypes[el.type];
 
       this.editor.setDecorations(DecorationType, el.decoration);
     });
 
-    console.log("rang范围", tempArray);
+    console.log("rang范围", this.reviewType);
   }
 }
 module.exports = Decoration;
