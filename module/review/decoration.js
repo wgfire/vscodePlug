@@ -12,87 +12,134 @@ const DecorationType = window.createTextEditorDecorationType({
  * 每一个主题的所对应的颜色
  */
 const DecorationTypes = {
-  Perf: window.createTextEditorDecorationType({
+  Perf: {
     border: "1px",
-    borderStyle: "dotted",
     borderColor: "#08AEEA",
     backgroundColor: "#08AEEA",
     color: "white",
-  }),
-  Bug: window.createTextEditorDecorationType({
+    rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  },
+  Bug: {
     border: "1px",
-    borderStyle: "dotted",
     borderColor: "#F76B1C",
     backgroundColor: "#F76B1C",
     color: "white",
-  }),
-  Format: window.createTextEditorDecorationType({
+    rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  },
+  Format: {
     border: "1px",
-    borderStyle: "dotted",
     borderColor: "#FBAB7E",
     backgroundColor: "#ffcc00",
     color: "#1f1f1f",
-  }),
+    rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  },
 };
 
 class Decoration {
   constructor() {
     this.editor = window.activeTextEditor;
 
-    this.regS = [/\.[Perf|Bug|Format]+/g, /(?<=\*@reviewContent(\s\S)?)([\S\s]*?)(?=\*\/)/g];
-
+    this.regS = [/(?<=\*@reviewType)\.(Perf|Bug|Format)?/g, /(?<=\*@reviewContent(\s\S)?)([\S\s]*?)(?=\*\/)/g];
+    this.activeLine = {}
     this.timeout = null;
 
     this.reviewType = []; // 为review类型添加颜色
 
     this.reviewContent = []; // @ReviewContent内容添加颜色
 
-    this.review = {};
-
+    this.reviewDecoration = {};
+    this.reviewContent.push(this.editor.document.fileName);
+    this.createDecoration();
     window.onDidChangeActiveTextEditor(() => {
       console.log(this.editor.document, "切换文件");
-
+      this.init();
+      this.reviewContent.push(this.editor.document.fileName);
+      this.reviewContent = [...new Set(this.reviewContent)];
       this.editor = window.activeTextEditor;
-
+      console.log(this.reviewContent, "多个文件");
       this.triggerUpdateDecorations();
     });
 
-    workspace.onDidChangeTextDocument(() => {
-      console.log(this.editor.document, "改变当前文件内容");
-
-      this.triggerUpdateDecorations();
+    workspace.onDidChangeTextDocument((e) => {
+      // console.log(this.editor.document, "改变当前文件内容");
+      this.triggerUpdateDecorations(e.contentChanges[0].range);
       //this.DecNumber();
     });
   }
   // 防抖触发
-  triggerUpdateDecorations() {
+  triggerUpdateDecorations(line) {
+    // this.dispose();
     if (this.timeout) {
       clearTimeout(this.timeout);
       this.timeout = null;
     }
     this.timeout = setTimeout(() => {
+      this.activeLine = line
       this.Decoration();
-    }, 1000);
+    }, 2000);
   }
   Decoration() {
-    this.init();
     this.findEditeContent();
-    this.setDecoration();
+    this.ConversionData();
+  }
+  createDecoration() {
+    this.Perf = window.createTextEditorDecorationType({
+      border: "1px",
+      borderColor: "#08AEEA",
+      backgroundColor: "#08AEEA",
+      color: "white",
+      rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+    });
+    this.Bug = window.createTextEditorDecorationType({
+      border: "1px",
+      borderColor: "#F76B1C",
+      backgroundColor: "#F76B1C",
+      color: "white",
+      rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+    });
+    this.Format = window.createTextEditorDecorationType({
+      border: "1px",
+      borderColor: "#FBAB7E",
+      backgroundColor: "#ffcc00",
+      color: "#1f1f1f",
+      rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+    });
   }
   init() {
     // 初始化数据。
+    //this.createDecoration();
     this.reviewType = [];
-    this.reviewContent = [];
-    this.initDecoration();
   }
   initDecoration() {
-    console.log("初始化", "xx");
+    console.log("清空");
+    // let line = this.editor.document.lineCount;
+    // this.editor.document.lineAt(line);
+    // let rang = new Range(29, 0, 32, 2);
+    // let dec = {
+    //   range: rang,
+    //   hoverMessage: "默认主题",
+    // }
+    // this.dispose();
     this.reviewType.forEach((el) => {
-      //const DecorationType = DecorationTypes[el.type];
-
-      this.editor.setDecorations(DecorationType, el.decoration);
+      //  DecorationType.dispose();
+      console.log(el.decorationType, "x");
+      this.editor.setDecorations(el.decorationType, []);
     });
-    return false;
+  }
+  /**
+   * 根据起点找到是否有对应的内容
+   */
+  findContentBuyStart(line) {
+    let result = {};
+    const starts = line._start._line;
+    const ends = line._end._character;
+
+    let index = this.reviewType.findIndex((el) => {
+      let start = el.decoration[0].range._start._line;
+      let end = el.el.decoration[1].range._end._character;
+      return starts <= start && ends <= end;
+    });
+    console.log(index, "找到的索引");
   }
   // 根据正则指定的内容
   findEditeContent() {
@@ -109,10 +156,14 @@ class Decoration {
       while ((match = reg.exec(text))) {
         // 获取数字开始和结束的位置
         const startPos = doc.positionAt(match.index + 1);
-
-        const endPos = doc.positionAt(match.index + match[0].length);
+        let endLength = match.index + match[0].length;
+        if (index > 0) endLength -= 2;
+        const endPos = doc.positionAt(endLength);
 
         const line = new Range(startPos, endPos);
+        const editeLine = this.editor.edit((e) => {
+          console.log(e);
+        });
 
         if (index === 0) type = doc.getText(line);
 
@@ -120,14 +171,17 @@ class Decoration {
 
         const decoration = {
           range: line,
+          hoverMessage: "主题颜色" + type,
         };
+        if (type) {
+          this.findContentBuyStart(line);
+          const review = {
+            type: type,
+            decoration,
+          };
 
-        const review = {
-          type: type,
-          decoration,
-        };
-
-        this.reviewType.push(review);
+          this.reviewType.push(review);
+        }
       }
 
       console.log("截取到的字符", this.reviewType);
@@ -137,9 +191,9 @@ class Decoration {
   /**
    * 拿到rang数据设置背景颜色
    */
-  setDecoration() {
+  ConversionData() {
     // 先对数组从小到大排序
-    if (this.reviewType.length <= 0) return this.initDecoration();
+    if (this.reviewType.length < 2) return false;
     this.reviewType.sort((a, b) => {
       return a.decoration.range._start._line - b.decoration.range._start._line;
     });
@@ -154,19 +208,30 @@ class Decoration {
       const tempObj = {
         type: element.type,
         decoration: [element.decoration, next.decoration],
+        decorationType: this[element.type],
       };
 
       tempArray.push(tempObj);
     }
     this.reviewType = tempArray;
+    this.setDecorationToData();
+  }
 
+  setDecorationToData() {
     this.reviewType.forEach((el) => {
-      const DecorationType = DecorationTypes[el.type];
-
-      this.editor.setDecorations(DecorationType, el.decoration);
+      //const DecorationType = DecorationTypes[el.type];
+      //  DecorationType.dispose();
+      //this.editor.setDecorations(el.decorationType, []);
+      this.editor.setDecorations(el.decorationType, el.decoration);
     });
 
     console.log("rang范围", this.reviewType);
+  }
+
+  dispose() {
+    this.reviewType.forEach((el) => {
+      el.dispose();
+    });
   }
 }
 module.exports = Decoration;

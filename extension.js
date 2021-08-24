@@ -25,7 +25,7 @@ function activate(context) {
   let disposableClear = vscode.commands.registerTextEditorCommand("template-code.clearCD", (textEditor, edit) => {
     clearCd(textEditor);
   });
-
+ 
   context.subscriptions.push(disposableCreateFile);
   context.subscriptions.push(collectCodeSnippet);
   context.subscriptions.push(disposableClear);
