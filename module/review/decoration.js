@@ -40,7 +40,7 @@ class Decoration {
     this.editor = window.activeTextEditor;
 
     this.regS = [/(?<=\*@reviewType)\.(Perf|Bug|Format)?/g, /(?<=\*@reviewContent(\s\S)?)([\S\s]*?)(?=\*\/)/g];
-    this.activeLine = {}
+    this.activeLine = {};
     this.timeout = null;
 
     this.reviewType = []; // 为review类型添加颜色
@@ -49,7 +49,7 @@ class Decoration {
 
     this.reviewDecoration = {};
     this.reviewContent.push(this.editor.document.fileName);
-    this.createDecoration();
+
     window.onDidChangeActiveTextEditor(() => {
       console.log(this.editor.document, "切换文件");
       this.init();
@@ -62,49 +62,28 @@ class Decoration {
 
     workspace.onDidChangeTextDocument((e) => {
       // console.log(this.editor.document, "改变当前文件内容");
-      this.triggerUpdateDecorations(e.contentChanges[0].range);
+      this.activeLine = e.contentChanges[0].range;
+      this.triggerUpdateDecorations();
       //this.DecNumber();
     });
   }
   // 防抖触发
-  triggerUpdateDecorations(line) {
+  triggerUpdateDecorations() {
     // this.dispose();
     if (this.timeout) {
       clearTimeout(this.timeout);
       this.timeout = null;
     }
     this.timeout = setTimeout(() => {
-      this.activeLine = line
       this.Decoration();
     }, 2000);
   }
   Decoration() {
+    this.init();
     this.findEditeContent();
-    this.ConversionData();
+    //  this.setDecorationToData();
   }
-  createDecoration() {
-    this.Perf = window.createTextEditorDecorationType({
-      border: "1px",
-      borderColor: "#08AEEA",
-      backgroundColor: "#08AEEA",
-      color: "white",
-      rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-    });
-    this.Bug = window.createTextEditorDecorationType({
-      border: "1px",
-      borderColor: "#F76B1C",
-      backgroundColor: "#F76B1C",
-      color: "white",
-      rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-    });
-    this.Format = window.createTextEditorDecorationType({
-      border: "1px",
-      borderColor: "#FBAB7E",
-      backgroundColor: "#ffcc00",
-      color: "#1f1f1f",
-      rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-    });
-  }
+
   init() {
     // 初始化数据。
     //this.createDecoration();
@@ -112,14 +91,6 @@ class Decoration {
   }
   initDecoration() {
     console.log("清空");
-    // let line = this.editor.document.lineCount;
-    // this.editor.document.lineAt(line);
-    // let rang = new Range(29, 0, 32, 2);
-    // let dec = {
-    //   range: rang,
-    //   hoverMessage: "默认主题",
-    // }
-    // this.dispose();
     this.reviewType.forEach((el) => {
       //  DecorationType.dispose();
       console.log(el.decorationType, "x");
@@ -129,17 +100,18 @@ class Decoration {
   /**
    * 根据起点找到是否有对应的内容
    */
-  findContentBuyStart(line) {
-    let result = {};
+  findContentBuyStart(line, type) {
+    console.log("当前line", line, type);
     const starts = line._start._line;
     const ends = line._end._character;
 
     let index = this.reviewType.findIndex((el) => {
-      let start = el.decoration[0].range._start._line;
-      let end = el.el.decoration[1].range._end._character;
-      return starts <= start && ends <= end;
+      let start = el.decoration.range._start._line;
+      return starts <= start;
     });
     console.log(index, "找到的索引");
+    if (index > -1) this.reviewType[index].type = type;
+    return index > -1 ? this.reviewType[index] : undefined;
   }
   // 根据正则指定的内容
   findEditeContent() {
@@ -152,7 +124,6 @@ class Decoration {
 
     this.regS.forEach((reg, index) => {
       let type = "Perf";
-
       while ((match = reg.exec(text))) {
         // 获取数字开始和结束的位置
         const startPos = doc.positionAt(match.index + 1);
@@ -161,26 +132,26 @@ class Decoration {
         const endPos = doc.positionAt(endLength);
 
         const line = new Range(startPos, endPos);
-        const editeLine = this.editor.edit((e) => {
-          console.log(e);
-        });
 
         if (index === 0) type = doc.getText(line);
 
-        console.log(type, "主题颜色");
+        console.log(type, "主题颜色", index);
 
         const decoration = {
           range: line,
           hoverMessage: "主题颜色" + type,
         };
         if (type) {
-          this.findContentBuyStart(line);
           const review = {
             type: type,
             decoration,
           };
-
+          // if (this.reviewType.length >= 2) {
+          //   let result = this.findContentBuyStart(this.activeLine, type);
+          //   if (!result) this.reviewType.push(review);
+          // } else {
           this.reviewType.push(review);
+          // }
         }
       }
 
@@ -208,24 +179,25 @@ class Decoration {
       const tempObj = {
         type: element.type,
         decoration: [element.decoration, next.decoration],
-        decorationType: this[element.type],
+        decorationType: window.createTextEditorDecorationType(DecorationTypes[element.type]),
       };
 
       tempArray.push(tempObj);
     }
-    this.reviewType = tempArray;
-    this.setDecorationToData();
+
+    return tempArray;
   }
 
   setDecorationToData() {
-    this.reviewType.forEach((el) => {
+    let tempArray = this.ConversionData();
+    tempArray.forEach((el) => {
       //const DecorationType = DecorationTypes[el.type];
       //  DecorationType.dispose();
       //this.editor.setDecorations(el.decorationType, []);
       this.editor.setDecorations(el.decorationType, el.decoration);
     });
 
-    console.log("rang范围", this.reviewType);
+    console.log("rang范围", tempArray);
   }
 
   dispose() {
