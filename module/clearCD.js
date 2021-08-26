@@ -3,6 +3,8 @@
  */
 const strUtils = require("../utils/string");
 const vscode = require("vscode");
+// @ts-ignore
+const TextEncoder = require("fast-text-encoding");
 
 const clearCd = (editor) => {
   // 获取用户文本内容

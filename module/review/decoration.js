@@ -80,7 +80,7 @@ class Decoration {
     }
     this.timeout = setTimeout(() => {
       this.Decoration();
-    }, 500);
+    }, 20);
   }
   Decoration() {
     this.init();
