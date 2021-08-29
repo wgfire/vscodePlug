@@ -14,6 +14,27 @@
   ],
   "main": "./extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "title": "发财 ",
+          "id": "money",
+          "icon": "./static/svg/money.svg"
+        }
+      ]
+    },
+    "views": {
+      "money": [
+        {
+          "id": "pageTemplate",
+          "name": "页面模板"
+        },
+        {
+          "id": "businessGuide",
+          "name": "业务避障"
+        }
+      ]
+    },
     "snippets": [
       {
         "language": "javascript",
