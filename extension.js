@@ -5,6 +5,7 @@ const shareCode = require("./module/shareCode");
 const { rootResolvePath, createTemplateFile } = require("./module/createTemplate/index");
 const review = require("./module/review/index");
 const clearCd = require("./module/clearCD");
+const { TestView } = require("./module/TreeData");
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -25,7 +26,10 @@ function activate(context) {
   let disposableClear = vscode.commands.registerTextEditorCommand("template-code.clearCD", (textEditor, edit) => {
     clearCd(textEditor);
   });
- 
+
+  //const view = vscode.window.createTreeView("testView", { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
+  // vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
+  new TestView(context);
   context.subscriptions.push(disposableCreateFile);
   context.subscriptions.push(collectCodeSnippet);
   context.subscriptions.push(disposableClear);
