@@ -2,6 +2,7 @@ const vscode = require("vscode");
 
 class TestView {
   constructor(context) {
+    // @ts-ignore
     const view = vscode.window.createTreeView("pageTemplate", { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
     context.subscriptions.push(view);
     vscode.commands.registerCommand("testView.reveal", async () => {
@@ -19,85 +20,32 @@ class TestView {
   }
 }
 
-const tree = {
-  a: {
-    aa: {
-      aaa: {
-        aaaa: {
-          aaaaa: {
-            aaaaaa: {},
-          },
-        },
-      },
-    },
-    ab: {},
-  },
-  b: {
-    ba: {},
-    bb: {},
-  },
-};
-const nodes = {};
-
 function aNodeWithIdTreeDataProvider() {
   return {
     getChildren: (element) => {
-      return getChildren(element ? element.key : undefined).map((key) => getNode(key));
+      // 判断上级是否有父级节点，root根节点不算undefine
+      console.log(element, "根节点");
+      var childs = [];
+      for (let index = 0; index < 3; index++) {
+        const element = index.toString();
+        var item = new vscode.TreeItem(element, vscode.TreeItemCollapsibleState.None);
+        item.command = {
+          command: "money" + element,
+          title: "测试" + element,
+          arguments: [element + "参数"],
+        };
+        childs[index] = item;
+      }
+      return childs;
     },
     getTreeItem: (element) => {
-      const treeItem = getTreeItem(element.key);
-      treeItem.id = element.key;
-      return treeItem;
+      return element;
     },
-    getParent: ({ key }) => {
-      const parentKey = key.substring(0, key.length - 1);
-      return parentKey ? new Key(parentKey) : void 0;
-    },
+    // getParent: ({ key }) => {
+    //   const parentKey = key.substring(0, key.length - 1);
+    //   return parentKey ? new Key(parentKey) : void 0;
+    // },
   };
-}
-
-function getChildren(key) {
-  if (!key) {
-    return Object.keys(tree);
-  }
-  const treeElement = getTreeElement(key);
-  if (treeElement) {
-    return Object.keys(treeElement);
-  }
-  return [];
-}
-
-function getTreeItem(key) {
-  const treeElement = getTreeElement(key);
-  // An example of how to use codicons in a MarkdownString in a tree item tooltip.
-  const tooltip = new vscode.MarkdownString(`$(zap) Tooltip for ${key}`, true);
-  return {
-    label: { label: key, highlights: key.length > 1 ? [[key.length - 2, key.length - 1]] : void 0 },
-    tooltip,
-    collapsibleState: treeElement && Object.keys(treeElement).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None,
-  };
-}
-
-function getTreeElement(element) {
-  let parent = tree;
-  for (let i = 0; i < element.length; i++) {
-    parent = parent[element.substring(0, i + 1)];
-    if (!parent) {
-      return null;
-    }
-  }
-  return parent;
-}
-
-function getNode(key) {
-  if (!nodes[key]) {
-    nodes[key] = new Key(key);
-  }
-  return nodes[key];
-}
-
-class Key {
-  constructor(key) {}
 }
 
 module.exports = {

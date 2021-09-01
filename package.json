@@ -27,7 +27,8 @@
       "money": [
         {
           "id": "pageTemplate",
-          "name": "页面模板"
+          "name": "页面模板",
+          "icon": "./static/svg/money.svg"
         },
         {
           "id": "businessGuide",
@@ -53,6 +54,14 @@
       {
         "command": "template-code.collectCodeSnippet",
         "title": "分享片段"
+      },
+      {
+        "command": "pageTemplate.add",
+        "title": "添加模板",
+        "icon": {
+          "light": "./static/svg/money.svg",
+          "dark": "./static/svg/money.svg"
+        }
       }
     ],
     "keybindings": [
@@ -70,6 +79,13 @@
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "pageTemplate.add",
+          "when": "view ==pageTemplate",
+          "group": "navigation"
+        }
+      ],
       "editor/context": [
         {
           "when": "editorFocus",
