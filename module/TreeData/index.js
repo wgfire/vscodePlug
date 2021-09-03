@@ -1,22 +1,24 @@
 const vscode = require("vscode");
-
+const path = require("path");
+const treeDataProviderBuyComponent = require('./componentProvider')
 class TestView {
   constructor(context) {
     // @ts-ignore
-    const view = vscode.window.createTreeView("pageTemplate", { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
+    const view = vscode.window.createTreeView("pageTemplate", { treeDataProvider: treeDataProviderBuyComponent(), showCollapseAll: true });
     context.subscriptions.push(view);
-    vscode.commands.registerCommand("testView.reveal", async () => {
-      // const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
-      // if (key) {
-      // 	await view.reveal({ key }, { focus: true, select: false, expand: true });
-      // }
+    let add = vscode.commands.registerCommand("pageTemplate.add", async (arg) => {
+      console.log(arg, "模板添加");
     });
-    vscode.commands.registerCommand("testView.changeTitle", async () => {
-      // const title = await vscode.window.showInputBox({ prompt: 'Type the new title for the Test View', placeHolder: view.title });
-      // if (title) {
-      // 	view.title = title;
-      // }
+
+    let deletes = vscode.commands.registerCommand("pageTemplate.item.delete", async (arg) => {
+      console.log(arg, "模板删除");
     });
+
+    vscode.commands.registerCommand("pageTemplate.form", async (arg) => {
+      console.log("点击了表单组件", arg);
+    });
+    context.subscriptions.push(add);
+    context.subscriptions.push(deletes);
   }
 }
 
@@ -30,10 +32,13 @@ function aNodeWithIdTreeDataProvider() {
         const element = index.toString();
         var item = new vscode.TreeItem(element, vscode.TreeItemCollapsibleState.None);
         item.command = {
-          command: "money" + element,
+          command: "pageTemplate." + element,
           title: "测试" + element,
           arguments: [element + "参数"],
         };
+        //  item.id = "pageTemplate." + element;
+        item.iconPath = path.join(__filename, "../../../static/svg/components.svg");
+        //item.tooltip = "模板啊";
         childs[index] = item;
       }
       return childs;
@@ -41,10 +46,6 @@ function aNodeWithIdTreeDataProvider() {
     getTreeItem: (element) => {
       return element;
     },
-    // getParent: ({ key }) => {
-    //   const parentKey = key.substring(0, key.length - 1);
-    //   return parentKey ? new Key(parentKey) : void 0;
-    // },
   };
 }
 

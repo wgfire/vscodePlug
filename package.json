@@ -27,7 +27,7 @@
       "money": [
         {
           "id": "pageTemplate",
-          "name": "页面模板",
+          "name": "记忆模板",
           "icon": "./static/svg/money.svg"
         },
         {
@@ -62,6 +62,14 @@
           "light": "./static/svg/money.svg",
           "dark": "./static/svg/money.svg"
         }
+      },
+      {
+        "command": "pageTemplate.item.delete",
+        "title": "删除模板",
+        "icon": {
+          "light": "./static/svg/money.svg",
+          "dark": "./static/svg/money.svg"
+        }
       }
     ],
     "keybindings": [
@@ -84,6 +92,13 @@
           "command": "pageTemplate.add",
           "when": "view ==pageTemplate",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "pageTemplate.item.delete",
+          "when": "view ==pageTemplate",
+          "group": "inline"
         }
       ],
       "editor/context": [
