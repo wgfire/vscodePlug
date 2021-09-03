@@ -11,3 +11,4 @@ const stringToUint8Array = (str) => {
 module.exports = {
   stringToUint8Array,
 };
+

@@ -2,12 +2,7 @@
  * 为review代码添加文本颜色
  */
 const vscode = require("vscode");
-const { window, workspace, Range, Position } = vscode;
-const DecorationType = window.createTextEditorDecorationType({
-  borderColor: vscode.ThemeColor,
-  backgroundColor: vscode.ThemeColor,
-  color: vscode.Color,
-});
+const { window, workspace, Range } = vscode;
 /**
  * 每一个主题的所对应的颜色
  */
@@ -93,6 +88,7 @@ class Decoration {
     // 初始化数据。
     //this.createDecoration();
     this.reviewDecoration = [];
+    // TODO 清空当前的review范围，当前是多个review都会被清空一次
     console.log(this.decorationList, "初始化之前的装饰器");
     this.decorationList.forEach((el) => {
       this.editor.setDecorations(el, []);

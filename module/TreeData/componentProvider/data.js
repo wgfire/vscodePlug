@@ -7,7 +7,8 @@ const TreeDate = [
       title: "表单组件",
       arguments: [
         {
-          content: "测试数据",
+          content: "",
+          fileName: "test",
         },
       ],
     },

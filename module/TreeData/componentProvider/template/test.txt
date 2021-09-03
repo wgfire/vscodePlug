@@ -1,0 +1,76 @@
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import PropTypes from 'prop-types';
+
+import FileUpload from './index';
+import HelpIcon from '../../HelpIcon';
+import '../Input/index.less';
+import { toJS } from 'mobx';
+import { createApiUrl, getProp } from '../../../utils/common';
+import api from '../../../config/api';
+import QuoteTemplate from './QuoteTemplate';
+
+export const LabelFile = ({ label, value, url, oss, extra, message, return_id, required, onChange, isEnd }) => {
+  extra = extra ? extra : {};
+  let helper = extra.helper;
+  let disabled = getProp(extra, 'disabled');
+  let propsDisabled = getProp(extra, 'props', 'readonly');
+  extra.props = extra.props ? extra.props : {};
+  let { max, style, ext, tip, maxSize, params, quoteTemplate, quoteTemplateTitle, labelTip } = extra;
+  let extraProps = { max, style, ext, maxSize, tip, params };
+  return (
+    <div className="label-input">
+      <div className="czlabel">
+        {label}
+        {required && <span className="czrequired">*</span>}
+        {helper && <HelpIcon title={helper} />}
+        {labelTip && <span style={{ color: '#999', marginLeft: 10 }}>{labelTip}</span>}
+        {quoteTemplate && (
+          <QuoteTemplate title={quoteTemplateTitle} template={quoteTemplate} style={{ float: 'right' }} />
+        )}
+      </div>
+      <FileUpload
+        {...extraProps}
+        url={url}
+        return_id={return_id}
+        oss={oss}
+        disabled={disabled || propsDisabled || isEnd}
+        style={{ width: '100%' }}
+        fileList={toJS(value)}
+        onChange={onChange}
+      />
+      {message && <span className="cztip">{message}</span>}
+    </div>
+  );
+};
+
+@inject('returnBid')
+@observer
+class BidFile extends Component {
+  render() {
+    let { returnBid, index, id, isEnd } = this.props;
+
+    let value = returnBid.data[index][id];
+    let extra = returnBid.extras[index][id];
+    let message = returnBid.messages[index][id];
+    let return_id = returnBid.data[index].id;
+    extra.props = extra.props ? extra.props : {};
+
+    if (returnBid.isEnd) extra.props.disabled = true;
+    let props = {
+      isEnd,
+      value,
+      extra,
+      message,
+      oss: true,
+      return_id: return_id,
+      required: extra.required,
+      label: extra.label,
+      url: createApiUrl(api.fileUploadReturnBid),
+      onChange: value => returnBid.changeValue(index, id, value)
+    };
+    return <LabelFile {...props} />;
+  }
+}
+
+export { BidFile };

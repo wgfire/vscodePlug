@@ -27,8 +27,6 @@ function activate(context) {
     clearCd(textEditor);
   });
 
-  //const view = vscode.window.createTreeView("testView", { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
-  // vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
   new TestView(context);
   context.subscriptions.push(disposableCreateFile);
   context.subscriptions.push(collectCodeSnippet);
