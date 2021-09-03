@@ -41,9 +41,11 @@ async function createTemplateFile(uri) {
   const [FolderName, FolderTemplate] = InputName.split(" "); // 分割组件名 和 组件模板
   console.log(FolderName, FolderTemplate);
   if (!InputName || !FolderTemplate) return window.showErrorMessage("输入的参数有误，请按格式输入");
+
   let FolderTemplatePath = path.resolve(RootPath, FolderTemplate);
   let result = regular.isFileOrFolder(FolderTemplate); // 是否输入了后缀名
   if (!result) FolderTemplatePath += ".js";
+
   const ExiststemplateFolder = fs.existsSync(FolderTemplatePath);
   if (!ExiststemplateFolder) return window.showErrorMessage("找不到模板文件");
 

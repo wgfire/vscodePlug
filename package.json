@@ -57,7 +57,11 @@
       },
       {
         "command": "pageTemplate.add",
-        "title": "添加模板",
+        "title": "添加模板"
+      },
+      {
+        "command": "pageTemplate.refresh",
+        "title": "刷新",
         "icon": {
           "light": "./static/svg/money.svg",
           "dark": "./static/svg/money.svg"
@@ -89,7 +93,7 @@
     "menus": {
       "view/title": [
         {
-          "command": "pageTemplate.add",
+          "command": "pageTemplate.refresh",
           "when": "view ==pageTemplate",
           "group": "navigation"
         }
@@ -110,6 +114,11 @@
         {
           "when": "editorFocus",
           "command": "template-code.collectCodeSnippet",
+          "group": "navigation"
+        },
+        {
+          "when": "editorFocus",
+          "command": "pageTemplate.add",
           "group": "navigation"
         }
       ],
