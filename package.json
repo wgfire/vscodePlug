@@ -71,8 +71,8 @@
         "command": "pageTemplate.item.delete",
         "title": "删除模板",
         "icon": {
-          "light": "./static/svg/money.svg",
-          "dark": "./static/svg/money.svg"
+          "light": "./static/svg/delete.svg",
+          "dark": "./static/svg/delete.svg"
         }
       }
     ],

@@ -22,8 +22,16 @@ function getFile(filePath) {
     throw new Error("写入失败");
   }
 }
-
+function unlink(filePath) {
+  try {
+    let result = fs.unlinkSync(filePath);
+    return result;
+  } catch (error) {
+    throw new Error("删除文件失败" + filePath);
+  }
+}
 module.exports = {
   getFile,
   writeFile,
+  unlink,
 };

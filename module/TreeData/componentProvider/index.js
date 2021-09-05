@@ -4,18 +4,19 @@
 const path = require("path");
 const vscode = require("vscode");
 const iconPath = path.join(__filename, "../../../../static/svg/components.svg");
-const providerData = require("./data");
-const templatePath = path.resolve(__dirname,'./template')
-function aNodeWithIdTreeDataProvider() {
- 
+const { TreeDate } = require("./data");
+let copyRegister = [];
+function nodeWithIdTreeDataProvider() {
   return {
     getChildren: (element) => {
       // 判断上级是否有父级节点，root根节点不算undefine
       console.log(element, "根节点");
       let children = [];
-      for (let index = 0; index < providerData.length; index++) {
-        const element = providerData[index];
-        var item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState[element.collapsible]);
+      // let TreeData = providerData()
+      const providerDatas = TreeDate();
+      for (let index = 0; index < providerDatas.length; index++) {
+        const element = providerDatas[index];
+        var item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.None);
         item.command = element.command;
         item.iconPath = iconPath;
         item.id = element.id;
@@ -29,4 +30,20 @@ function aNodeWithIdTreeDataProvider() {
   };
 }
 
-module.exports = aNodeWithIdTreeDataProvider;
+function createRegisterData(handel) {
+  let result = [];
+  const providerDatas = TreeDate();
+  result = providerDatas.map((el) => {
+    let command = el.command.command;
+    let handeObj = {};
+    handeObj[command] = handel;
+    return handeObj;
+  });
+  copyRegister = result;
+  return result;
+}
+
+module.exports = {
+  nodeWithIdTreeDataProvider,
+  createRegisterData,
+};

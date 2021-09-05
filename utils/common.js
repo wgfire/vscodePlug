@@ -7,12 +7,20 @@ const path = require("path");
  * @returns
  */
 function registrationCommand(arg) {
+  console.log(arg, "arg");
   if (!Array.isArray(arg)) throw new Error("请传入数组");
   let register = arg;
   register.forEach((el) => {
     const key = Object.keys(el)[0];
-    let result = vscode.commands.registerCommand(key, el[key]);
-    el.result = result;
+    try {
+      vscode.commands.getCommands(false).then((res) => {
+        console.log(res.includes(key), "注册");
+        if (!res.includes(key)) {
+          let result = vscode.commands.registerCommand(key, el[key]);
+          el.result = result;
+        }
+      });
+    } catch (error) {}
   });
   return register;
 }
