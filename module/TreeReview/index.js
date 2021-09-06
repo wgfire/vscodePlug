@@ -12,8 +12,11 @@ async function clickTemplateHandel(params) {
   /**
    * 获取到地址，然后打开文件
    */
+  vscode.workspace.openTextDocument(vscode.Uri.file(params.filePath)).then((res) => {
+    vscode.window.showTextDocument(res);
+    console.log(res, "打开成功");
+  });
 }
-
 class TreeReview {
   constructor(context) {
     this.context = context;

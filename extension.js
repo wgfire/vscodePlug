@@ -16,7 +16,6 @@ function activate(context) {
   console.log(shareCode instanceof Function);
   rootResolvePath("template-folder.js"); // 判断是否已经有了模板文件
   review(context);
-
   let disposableCreateFile = vscode.commands.registerCommand("template-code.createFilePath", async (uri) => {
     createTemplateFile(uri);
   });

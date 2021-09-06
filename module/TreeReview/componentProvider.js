@@ -17,6 +17,7 @@ function createTree() {
         arguments: [
           {
             fileName: fileName,
+            filePath: reviewData[element].filePath,
           },
         ],
       },

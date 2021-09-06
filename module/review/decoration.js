@@ -1,8 +1,11 @@
 /**
  * 为review代码添加文本颜色
  */
+const path = require("path");
 const vscode = require("vscode");
+const { writeFile } = require("../../utils/fs");
 const { window, workspace, Range } = vscode;
+const { TreeReview } = require("../TreeReview/index");
 /**
  * 每一个主题的所对应的颜色
  */
@@ -33,7 +36,7 @@ const DecorationTypes = {
 class Decoration {
   constructor() {
     this.editor = window.activeTextEditor;
-
+    this.TreeRivew = new TreeReview();
     this.regS = [/(?<=\*@reviewType)\.(Perf|Bug|Format)?/g, /(?<=\*@reviewContent(\s\S)?)([\S\s]*?)(?=\*\/)/g];
     this.activeLine = {}; // 当前操作的行
     this.timeout = null;
@@ -45,12 +48,12 @@ class Decoration {
     this.reviewContent = []; // @ReviewContent内容添加颜色
     this.decorationList = [];
     this.reviewContent.push(this.editor.document.fileName);
+    this.status = false;
     console.log(this.reviewContent, "当前文件列表");
     window.onDidChangeActiveTextEditor(() => {
-      console.log(this.editor.document, "切换文件");
       this.init();
-      this.reviewContent = [...new Set(this.reviewContent), this.editor.document.fileName];
       this.editor = window.activeTextEditor;
+      this.reviewContent = [...new Set(this.reviewContent), this.editor.document.fileName];
       console.log(this.reviewContent, "多个文件");
       this.triggerUpdateDecorations();
     });
@@ -115,8 +118,6 @@ class Decoration {
 
         if (index === 0) type = doc.getText(line);
 
-        console.log(type, "主题颜色", index);
-
         const decoration = {
           range: line,
           hoverMessage: "主题颜色" + type,
@@ -139,7 +140,7 @@ class Decoration {
    */
   ConversionData() {
     // 先对数组从小到大排序
-   // if (this.reviewDecoration.length < 2) return false;
+    // if (this.reviewDecoration.length < 2) return false;
     this.reviewDecoration.sort((a, b) => {
       return a.decoration.range._start._line - b.decoration.range._start._line;
     });
@@ -169,9 +170,38 @@ class Decoration {
       this.editor.setDecorations(el.decorationType, el.decoration);
     });
 
-    console.log("rang范围", tempArray);
-    if(tempArray.length ==0) this.reviewContent.pop()
-    
+    console.log(tempArray, "渲染数组");
+    // @ts-ignore
+    const Tree = require("../TreeReview/reviewData.json");
+
+    if (tempArray.length == 0) {
+      //  删除treejson里的数据;
+      let fileName = this.editor.document.fileName;
+      fileName = fileName.match(/\w+\\\w+\w+-?\w+(\.\w+)/g)[0];
+      console.log(fileName, "删除的文件");
+      Object.keys(Tree).forEach((el) => {
+        if (fileName === el) {
+          delete Tree[el];
+        }
+      });
+    } else {
+      // 判断json里有没有这个文件 没有的话加上
+
+      let filePath = this.editor.document.fileName;
+      let fileName = filePath.match(/\w+\\\w+\w+-?\w+(\.\w+)/g)[0];
+      let result = Object.keys(Tree).some((el) => {
+        return el === fileName;
+      });
+      if (!result) {
+        Tree[fileName] = {
+          filePath: filePath,
+          reviewNum: 1,
+        };
+      }
+    }
+    console.log("生成的tree", Tree);
+    writeFile(path.resolve(__dirname, "../TreeReview/reviewData.json"), JSON.stringify(Tree));
+    this.TreeRivew.initTree();
   }
 
   clearReviewType() {}
@@ -184,7 +214,7 @@ class Decoration {
         let end = el.decoration[1].range._end._line;
         return start <= starts && starts <= end;
       });
-      console.log(index, "找到的行");
+
       return index;
     } catch (error) {}
   }
@@ -193,7 +223,6 @@ class Decoration {
     // let index = this.findActiveData();
     this.reviewDecoration = [];
     // TODO 清空当前的review范围，当前是多个review都会被清空一次
-    console.log(this.decorationList, "初始化之前的装饰器");
     this.decorationList.forEach((el) => {
       this.editor.setDecorations(el, []);
     });

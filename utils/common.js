@@ -14,8 +14,10 @@ function registrationCommand(arg) {
     const key = Object.keys(el)[0];
     try {
       vscode.commands.getCommands(false).then((res) => {
-        console.log(res.includes(key), "注册");
-        if (!res.includes(key)) {
+        let isregister = res.includes(key);
+        console.log(isregister, "是否注册");
+        if (isregister) return true;
+        if (isregister === false) {
           let result = vscode.commands.registerCommand(key, el[key]);
           el.result = result;
         }

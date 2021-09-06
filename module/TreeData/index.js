@@ -49,9 +49,9 @@ async function clickTemplateHandel(params) {
    */
   try {
     // params.fileName += ".txt";
-    let writePath = vscode.window.visibleTextEditors[0].document.fileName;
+    let writePath = vscode.window.activeTextEditor.document.fileName;
     let getFilePath = path.resolve(templatePath, params.fileName);
-    console.log("获取写入的路径", getFilePath);
+    console.log("获取模板的路径", getFilePath);
     writeFile(writePath, getFile(getFilePath));
   } catch (error) {
     vscode.window.showErrorMessage("写入失败，请检查模板文件是否存在");
