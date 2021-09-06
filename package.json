@@ -31,8 +31,8 @@
           "icon": "./static/svg/money.svg"
         },
         {
-          "id": "businessGuide",
-          "name": "避雷针"
+          "id": "reviewHistory",
+          "name": "review列表"
         }
       ]
     },
@@ -54,6 +54,10 @@
       {
         "command": "template-code.collectCodeSnippet",
         "title": "分享片段"
+      },
+      {
+        "command": "review.click.item",
+        "title": "选择review类型的回调"
       },
       {
         "command": "pageTemplate.add",

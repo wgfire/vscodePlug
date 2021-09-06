@@ -6,6 +6,9 @@ const Decoration = require("./decoration");
  * @param {*} position
  * @param {*} context
  */
+const reviewCommand = vscode.commands.registerCommand("review.click.item", (arg) => {
+  console.log("点击完成", arg);
+});
 function provideCompletionItems(document, position, context) {
   const line = document.lineAt(position);
   //const projectPath = util.getProjectPath(document);
@@ -17,10 +20,16 @@ function provideCompletionItems(document, position, context) {
     console.log("字符串注册", lineText);
     //const json = require(`${projectPath}/package.json`);
     const dependencies = ["Perf", "Format", "Bug"]; //Object.keys(json.dependencies || {}).concat(Object.keys(json.devDependencies || {}));
+
     return dependencies.map((dep) => {
       // vscode.CompletionItemKind 表示提示的类型
       console.log(dep);
-      return new vscode.CompletionItem(dep, vscode.CompletionItemKind.Field);
+      let Com = new vscode.CompletionItem(dep, vscode.CompletionItemKind.Field);
+      Com.command = {
+        command: "review.click.item",
+        title: "xx",
+      };
+      return Com;
     });
   }
 }

@@ -65,14 +65,11 @@ class TestView {
     this.initTree();
     pageTemplateAdd(this.initTree);
     pageTemplateDelete(this.initTree);
-
+    console.log("初始化树模板");
     vscode.commands.registerCommand("pageTemplate.refresh", (arg) => {
       console.log("刷新了");
       this.initTree();
     });
-
-    // context.subscriptions.push(add);
-    // context.subscriptions.push(deletes);
   }
   initTree() {
     const registerData = createRegisterData(clickTemplateHandel);

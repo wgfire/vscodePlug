@@ -45,12 +45,11 @@ class Decoration {
     this.reviewContent = []; // @ReviewContent内容添加颜色
     this.decorationList = [];
     this.reviewContent.push(this.editor.document.fileName);
-
+    console.log(this.reviewContent, "当前文件列表");
     window.onDidChangeActiveTextEditor(() => {
       console.log(this.editor.document, "切换文件");
       this.init();
-      this.reviewContent.push(this.editor.document.fileName);
-      this.reviewContent = [...new Set(this.reviewContent)];
+      this.reviewContent = [...new Set(this.reviewContent), this.editor.document.fileName];
       this.editor = window.activeTextEditor;
       console.log(this.reviewContent, "多个文件");
       this.triggerUpdateDecorations();
@@ -66,6 +65,7 @@ class Decoration {
       //this.DecNumber();
     });
   }
+
   // 防抖触发
   triggerUpdateDecorations() {
     // this.dispose();
@@ -86,14 +86,7 @@ class Decoration {
 
   init() {
     // 初始化数据。
-    //this.createDecoration();
-    this.reviewDecoration = [];
-    // TODO 清空当前的review范围，当前是多个review都会被清空一次
-    console.log(this.decorationList, "初始化之前的装饰器");
-    this.decorationList.forEach((el) => {
-      this.editor.setDecorations(el, []);
-    });
-    this.decorationList = [];
+    this.clearDecorationToData();
   }
 
   // 根据正则指定的内容
@@ -146,7 +139,7 @@ class Decoration {
    */
   ConversionData() {
     // 先对数组从小到大排序
-    if (this.reviewDecoration.length < 2) return false;
+   // if (this.reviewDecoration.length < 2) return false;
     this.reviewDecoration.sort((a, b) => {
       return a.decoration.range._start._line - b.decoration.range._start._line;
     });
@@ -166,7 +159,7 @@ class Decoration {
       this.decorationList.push(tempObj.decorationType);
       tempArray.push(tempObj);
     }
-
+    this.reviewDecoration = tempArray;
     return tempArray;
   }
 
@@ -177,6 +170,34 @@ class Decoration {
     });
 
     console.log("rang范围", tempArray);
+    if(tempArray.length ==0) this.reviewContent.pop()
+    
+  }
+
+  clearReviewType() {}
+
+  findActiveData() {
+    try {
+      const starts = this.activeLine._start._line;
+      let index = this.reviewDecoration.findIndex((el) => {
+        let start = el.decoration[0].range._start._line;
+        let end = el.decoration[1].range._end._line;
+        return start <= starts && starts <= end;
+      });
+      console.log(index, "找到的行");
+      return index;
+    } catch (error) {}
+  }
+
+  clearDecorationToData() {
+    // let index = this.findActiveData();
+    this.reviewDecoration = [];
+    // TODO 清空当前的review范围，当前是多个review都会被清空一次
+    console.log(this.decorationList, "初始化之前的装饰器");
+    this.decorationList.forEach((el) => {
+      this.editor.setDecorations(el, []);
+    });
+    this.decorationList = [];
   }
 
   dispose() {

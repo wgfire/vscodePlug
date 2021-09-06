@@ -6,6 +6,7 @@ const { rootResolvePath, createTemplateFile } = require("./module/createTemplate
 const review = require("./module/review/index");
 const clearCd = require("./module/clearCD");
 const { TestView } = require("./module/TreeData");
+const { TreeReview } = require("./module/TreeReview");
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -28,6 +29,7 @@ function activate(context) {
   });
 
   new TestView(context);
+  new TreeReview(context);
   context.subscriptions.push(disposableCreateFile);
   context.subscriptions.push(collectCodeSnippet);
   context.subscriptions.push(disposableClear);

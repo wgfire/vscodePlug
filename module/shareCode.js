@@ -21,15 +21,15 @@ async function shareCode(textEditor) {
   if (!textContent) return window.showErrorMessage("你在逗我？没有选中内容你分享个锤锤！");
   const userList = await getUserList();
   console.log(userList, "用户啊");
-  // axios.post({
-  //   msgtype: "text",
-  //   msgContent: {
-  //     content: `机器人向你分享一段代码🤖：
-  //   ${textContent} `,
-  //     mentioned_list: userList || ["王港"],
-  //     mentioned_mobile_list: ["16607491196"],
-  //   },
-  // });
+  axios.post({
+    msgtype: "text",
+    msgContent: {
+      content: `机器人向你分享一段代码🤖：
+    ${textContent} `,
+      mentioned_list: userList || ["王港"],
+      mentioned_mobile_list: ["16607491196"],
+    },
+  });
 }
 
 module.exports = shareCode;
