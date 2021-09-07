@@ -15,7 +15,10 @@ function activate(context) {
   console.log('Congratulations, your extension "template-code" is now active!');
   console.log(shareCode instanceof Function);
   rootResolvePath("template-folder.js"); // 判断是否已经有了模板文件
+  console.log(vscode.workspace.rootPath, "根目录地址", vscode.workspace.workspaceFolders[0]);
+
   review(context);
+
   let disposableCreateFile = vscode.commands.registerCommand("template-code.createFilePath", async (uri) => {
     createTemplateFile(uri);
   });

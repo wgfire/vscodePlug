@@ -1,8 +1,21 @@
 {
-  "name": "template-code",
-  "displayName": "template-code",
-  "description": "获取对应的模板",
+  "name": "apop-code",
+  "displayName": "apop-code",
+  "description": "一锅粥插件",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wgfire/vscodePlug"
+  },
+  "publisher": "wgfire",
+  "license": "MIT",
+  "keywords": [
+    "效率",
+    "代码模板",
+    "review",
+    "vscode"
+  ],
+  "icon": "static/png/logo.png",
   "engines": {
     "vscode": "^1.57.0"
   },

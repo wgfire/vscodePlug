@@ -24,12 +24,11 @@ async function shareCode(textEditor) {
   axios.post({
     msgtype: "text",
     msgContent: {
-      content: `机器人向你分享一段代码🤖：
+      content: `🤖：
     ${textContent} `,
       mentioned_list: userList || ["王港"],
-      mentioned_mobile_list: ["16607491196"],
     },
   });
 }
-
+// mentioned_mobile_list: ["16607491196"],
 module.exports = shareCode;

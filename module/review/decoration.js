@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const { writeFile } = require("../../utils/fs");
 const { window, workspace, Range } = vscode;
 const { TreeReview } = require("../TreeReview/index");
+const rootPath = vscode.workspace.rootPath;
 /**
  * 每一个主题的所对应的颜色
  */
@@ -47,11 +48,10 @@ class Decoration {
 
     this.reviewContent = []; // @ReviewContent内容添加颜色
     this.decorationList = [];
-    this.reviewContent.push(this.editor.document.fileName);
+    this.editor && this.reviewContent.push(this.editor.document.fileName);
     this.status = false;
     console.log(this.reviewContent, "当前文件列表");
     window.onDidChangeActiveTextEditor(() => {
-      this.init();
       this.editor = window.activeTextEditor;
       this.reviewContent = [...new Set(this.reviewContent), this.editor.document.fileName];
       console.log(this.reviewContent, "多个文件");
@@ -171,6 +171,11 @@ class Decoration {
     });
 
     console.log(tempArray, "渲染数组");
+
+    this.updateTreeReview(tempArray);
+  }
+
+  updateTreeReview(tempArray) {
     // @ts-ignore
     const Tree = require("../TreeReview/reviewData.json");
 
@@ -196,6 +201,7 @@ class Decoration {
         Tree[fileName] = {
           filePath: filePath,
           reviewNum: 1,
+          rootPath:rootPath
         };
       }
     }
@@ -203,8 +209,6 @@ class Decoration {
     writeFile(path.resolve(__dirname, "../TreeReview/reviewData.json"), JSON.stringify(Tree));
     this.TreeRivew.initTree();
   }
-
-  clearReviewType() {}
 
   findActiveData() {
     try {

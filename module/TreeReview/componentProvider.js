@@ -1,12 +1,19 @@
 const vscode = require("vscode");
 const path = require("path");
+
 const iconPath = path.join(__filename, "../../../../static/svg/components.svg");
+const rootPath = vscode.workspace.rootPath;
 
 function createTree() {
   // @ts-ignore
-  const reviewData = require("./reviewData.json");
+  const treeData = require("./reviewData.json");
+  const reviewData = Object.keys(treeData).filter((el) => {
+    // @ts-ignore
+    return treeData[el].rootPath === rootPath;
+  });
+  console.log(reviewData, "过滤列表");
   let result = [];
-  result = Object.keys(reviewData).map((element) => {
+  result = reviewData.map((element) => {
     let fileName = element; //element.match(/\w+(\.\w+)/g);
     const TreeItem = {
       label: fileName,
@@ -17,7 +24,7 @@ function createTree() {
         arguments: [
           {
             fileName: fileName,
-            filePath: reviewData[element].filePath,
+            filePath: treeData[element].filePath,
           },
         ],
       },

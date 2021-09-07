@@ -1,8 +1,7 @@
 // @ts-nocheck
 const Axios = require("axios");
 const vscode = require("vscode");
-const settings = vscode.workspace.getConfiguration("shared"); // 获取用户配置的信息
-
+const axios = Axios.create();
 let contentType = {
   text: {
     msgtype: "text",
@@ -33,15 +32,18 @@ let contentType = {
   },
 };
 
-const axios = Axios.create({
-  baseURL: settings.webhook || "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6d3ec4c8-6e80-46d5-bb78-b593496cdf11",
-});
+function setBaseUrl() {
+  const settings = vscode.workspace.getConfiguration("shared"); // 获取用户配置的信息
+  return settings.webhook || "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6d3ec4c8-6e80-46d5-bb78-b593496cdf11";
+}
 
 function post(data) {
-  let content = contentType[data.msgtype] 
-  content[data.msgtype] = data.msgContent
+  let content = contentType[data.msgtype];
+  content[data.msgtype] = data.msgContent;
+  console.log("发送内容", content);
+  const url = setBaseUrl();
   axios
-    .post("", content)
+    .post(url, content)
     .then(function (response) {
       console.log(response, "响应");
     })

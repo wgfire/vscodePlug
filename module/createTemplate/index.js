@@ -14,17 +14,18 @@ async function rootResolvePath(fileName = "template-folder.js") {
    * */
   let templatePathUri = vscode.Uri.file(RootPath + "/" + fileName); // 写入的文件路径
   let enable = fs.existsSync(RootPath);
+  const document = await vscode.workspace.openTextDocument(templateFolderPath);
   // 没有的话创建模板文件夹
   console.log(enable, "创建了.vscode嘛");
   if (!enable) {
     await vscode.workspace.fs.createDirectory(vscode.Uri.file(`${RootPath}`));
     // 创建模板文件
+    vscode.workspace.fs.writeFile(templatePathUri, strUtils.stringToUint8Array(document.getText()));
   } else {
     // 是否有模板文件
     let isTemplate = fs.existsSync(path.resolve(RootPath, "template-folder.js"));
     console.log("有内置模板文件嘛", isTemplate);
     if (!isTemplate) {
-      const document = await vscode.workspace.openTextDocument(templateFolderPath);
       vscode.workspace.fs.writeFile(templatePathUri, strUtils.stringToUint8Array(document.getText()));
     }
   }

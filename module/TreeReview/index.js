@@ -6,23 +6,27 @@ const { nodeWithIdTreeDataProvider, createRegisterData } = require("./componentP
 const { getFile, writeFile, unlink } = require("../../utils/fs");
 const { registrationCommand } = require("../../utils/common");
 
-async function pageTemplateDelete(initTree) {}
+/**
+ * 获取到地址，然后打开文件
+ */
 async function clickTemplateHandel(params) {
   console.log("点击了review列表", params);
-  /**
-   * 获取到地址，然后打开文件
-   */
-  vscode.workspace.openTextDocument(vscode.Uri.file(params.filePath)).then((res) => {
-    vscode.window.showTextDocument(res);
-    console.log(res, "打开成功");
-  });
+  vscode.workspace.openTextDocument(vscode.Uri.file(params.filePath)).then(
+    (res) => {
+      vscode.window.showTextDocument(res);
+      console.log(res, "打开成功");
+    },
+    (reject) => {
+      vscode.window.showErrorMessage("文件打开失败");
+    }
+  );
 }
 class TreeReview {
   constructor(context) {
     this.context = context;
     this.initTree();
     console.log("初始化review");
-    pageTemplateDelete(this.initTree);
+    
   }
 
   initTree() {
