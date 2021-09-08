@@ -21,7 +21,7 @@ async function pageTemplateAdd(initTree) {
     let isTemplate = fs.existsSync(filePath);
     if (!isTemplate) {
       writeFile(filePath, content);
-      vscode.window.showErrorMessage("添加成功");
+      vscode.window.showInformationMessage("添加成功");
       initTree && initTree();
     } else {
       vscode.window.showErrorMessage("添加失败，已经存在相同名称");

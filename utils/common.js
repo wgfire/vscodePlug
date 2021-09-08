@@ -22,7 +22,9 @@ function registrationCommand(arg) {
           el.result = result;
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error,'注册命令失败');
+    }
   });
   return register;
 }

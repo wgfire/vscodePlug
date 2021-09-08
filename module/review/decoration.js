@@ -110,7 +110,7 @@ class Decoration {
         const startPos = doc.positionAt(match.index + 1);
         let endLength = match.index + match[0].length;
         empty = false;
-        if (index > 0) endLength -= 2;
+      
 
         const endPos = doc.positionAt(endLength);
 
