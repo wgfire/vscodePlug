@@ -5,7 +5,6 @@ const path = require("path");
 const vscode = require("vscode");
 const iconPath = path.join(__filename, "../../../../static/svg/components.svg");
 const { TreeDate } = require("./data");
-let copyRegister = [];
 function nodeWithIdTreeDataProvider() {
   return {
     getChildren: (element) => {
@@ -39,7 +38,6 @@ function createRegisterData(handel) {
     handeObj[command] = handel;
     return handeObj;
   });
-  copyRegister = result;
   return result;
 }
 

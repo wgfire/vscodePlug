@@ -30,20 +30,17 @@ async function pageTemplateAdd(initTree) {
 }
 async function pageTemplateDelete(initTree) {
   let deletes = vscode.commands.registerCommand("pageTemplate.item.delete", async (arg) => {
-    console.log(arg, "模板删除");
     let filePath = path.resolve(templatePath, arg.command.arguments[0].fileName);
     try {
       unlink(filePath);
       vscode.window.showErrorMessage("删除模板成功");
       initTree && initTree();
     } catch (error) {
-      console.log(error, "删除失败");
       vscode.window.showErrorMessage("删除模板失败");
     }
   });
 }
 async function clickTemplateHandel(params) {
-  console.log("点击了列表组件", params);
   /**
    * 获取模板然后写入到当前的文件地址
    */
@@ -51,7 +48,6 @@ async function clickTemplateHandel(params) {
     // params.fileName += ".txt";
     let writePath = vscode.window.activeTextEditor.document.fileName;
     let getFilePath = path.resolve(templatePath, params.fileName);
-    console.log("获取模板的路径", getFilePath);
     writeFile(writePath, getFile(getFilePath));
   } catch (error) {
     vscode.window.showErrorMessage("写入失败，请检查模板文件是否存在");
@@ -65,9 +61,7 @@ class TestView {
     this.initTree();
     pageTemplateAdd(this.initTree);
     pageTemplateDelete(this.initTree);
-    console.log("初始化树模板");
     vscode.commands.registerCommand("pageTemplate.refresh", (arg) => {
-      console.log("刷新了");
       this.initTree();
     });
   }

@@ -2,7 +2,7 @@
   "name": "apop-code",
   "displayName": "apop-code",
   "description": "一锅粥",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/wgfire/vscodePlug"
@@ -46,6 +46,10 @@
         {
           "id": "reviewHistory",
           "name": "review列表"
+        },
+        {
+          "id": "templateFolder",
+          "name": "文件夹模板"
         }
       ]
     },
@@ -91,6 +95,14 @@
           "light": "./static/svg/delete.svg",
           "dark": "./static/svg/delete.svg"
         }
+      },
+      {
+        "command": "FolderView.item.delete",
+        "title": "删除文件夹",
+        "icon": {
+          "light": "./static/svg/delete.svg",
+          "dark": "./static/svg/delete.svg"
+        }
       }
     ],
     "keybindings": [
@@ -119,6 +131,11 @@
         {
           "command": "pageTemplate.item.delete",
           "when": "view ==pageTemplate",
+          "group": "inline"
+        },
+        {
+          "command": "FolderView.item.delete",
+          "when": "view ==FolderView",
           "group": "inline"
         }
       ],

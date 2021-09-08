@@ -4,7 +4,10 @@ const fs = require("fs");
 const path = require("path");
 const strUtils = require("../../utils/string");
 const regular = require("../../utils/Regular");
-const RootPath = path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode");
+const { registrationCommand } = require("../../utils/common");
+const { createRegisterData, nodeWithIdTreeDataProvider } = require("./componentProvider");
+const { unlink } = require("../../utils/fs");
+const RootPath =  path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode");  //path.resolve(__dirname, "componentProvider", "template");
 const templateFolderPath = path.resolve(__dirname, "../../template", "template-folder.js"); // 默认的模板路径 存在插件 写入客户端
 /**
  */
@@ -46,7 +49,7 @@ async function createTemplateFile(uri) {
   let FolderTemplatePath = path.resolve(RootPath, FolderTemplate);
   let result = regular.isFileOrFolder(FolderTemplate); // 是否输入了后缀名
   if (!result) FolderTemplatePath += ".js";
-
+  console.log(FolderTemplatePath, "取模板文件地址");
   const ExiststemplateFolder = fs.existsSync(FolderTemplatePath);
   if (!ExiststemplateFolder) return window.showErrorMessage("找不到模板文件");
 
@@ -63,8 +66,46 @@ async function createTemplateFile(uri) {
     }
   });
 }
+function pageTemplateAdd(init) {
+
+}
+function clickTemplateHandel(params) {}
+
+async function pageTemplateDelete(initTree) {
+  let templatePath =RootPath
+  let deletes = vscode.commands.registerCommand("FolderView.item.delete", async (arg) => {
+    let filePath = path.resolve(templatePath, arg.command.arguments[0].fileName);
+    try {
+      unlink(filePath);
+      vscode.window.showErrorMessage("删除模板成功");
+      initTree && initTree();
+    } catch (error) {
+      vscode.window.showErrorMessage("删除模板失败");
+    }
+  });
+}
+
+class FolderView {
+  constructor(context) {
+    this.context = context;
+    this.view = null;
+    this.initTree();
+    pageTemplateAdd(this.initTree);
+    pageTemplateDelete(this.initTree);
+    vscode.commands.registerCommand("pageTemplate.refresh", (arg) => {
+      console.log("刷新了");
+      this.initTree();
+    });
+  }
+  initTree() {
+    const registerData = createRegisterData(clickTemplateHandel);
+    registrationCommand(registerData);
+    vscode.window.createTreeView("templateFolder", { treeDataProvider: nodeWithIdTreeDataProvider(), showCollapseAll: true });
+  }
+}
 
 module.exports = {
+  FolderView,
   rootResolvePath,
   createTemplateFile,
 };
