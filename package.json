@@ -2,7 +2,7 @@
   "name": "apop-code",
   "displayName": "apop-code",
   "description": "一锅粥",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/wgfire/vscodePlug"
