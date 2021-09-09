@@ -30,8 +30,25 @@ function unlink(filePath) {
     throw new Error("删除文件失败" + filePath);
   }
 }
+function rename(oldPath, newPath) {
+  try {
+    fs.renameSync(oldPath, newPath);
+  } catch (error) {
+    throw new Error("重命名文件失败" + oldPath);
+  }
+}
+function copyFile(src, desc) {
+  console.log(src, desc, "复制路径");
+  try {
+    fs.copyFileSync(src, desc);
+  } catch (error) {
+    throw new Error("复制文件失败" + src);
+  }
+}
 module.exports = {
   getFile,
   writeFile,
   unlink,
+  rename,
+  copyFile,
 };

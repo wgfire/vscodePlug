@@ -11,6 +11,7 @@ const { registrationCommand } = require("../../utils/common");
  */
 async function clickTemplateHandel(params) {
   console.log("点击了review列表", params);
+
   vscode.workspace.openTextDocument(vscode.Uri.file(params.filePath)).then(
     (res) => {
       vscode.window.showTextDocument(res);
@@ -26,7 +27,6 @@ class TreeReview {
     this.context = context;
     this.initTree();
     console.log("初始化review");
-    
   }
 
   initTree() {

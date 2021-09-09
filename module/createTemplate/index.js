@@ -6,8 +6,9 @@ const strUtils = require("../../utils/string");
 const regular = require("../../utils/Regular");
 const { registrationCommand } = require("../../utils/common");
 const { createRegisterData, nodeWithIdTreeDataProvider } = require("./componentProvider");
-const { unlink } = require("../../utils/fs");
-const RootPath =  path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode");  //path.resolve(__dirname, "componentProvider", "template");
+const { unlink, getFile, writeFile, rename, copyFile } = require("../../utils/fs");
+const { rejects } = require("assert");
+const RootPath = path.resolve(__dirname, "componentProvider", "template"); //path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode");  //path.resolve(__dirname, "componentProvider", "template");
 const templateFolderPath = path.resolve(__dirname, "../../template", "template-folder.js"); // 默认的模板路径 存在插件 写入客户端
 /**
  */
@@ -66,21 +67,85 @@ async function createTemplateFile(uri) {
     }
   });
 }
-function pageTemplateAdd(init) {
-
+function pageTemplateAdd(initTree) {
+  const add = vscode.commands.registerTextEditorCommand("templateFolder.add", async (arg) => {
+    console.log(arg, "添加模板信息");
+    // @ts-ignore
+    let content = arg.document.getText();
+    let fileName = await vscode.window.showInputBox({
+      placeHolder: "请输入组件名称，保持名称不重复",
+    });
+    if (!fileName || !content) return false;
+    fileName += ".js";
+    let filePath = path.resolve(RootPath, fileName);
+    let isTemplate = fs.existsSync(filePath);
+    if (!isTemplate) {
+      writeFile(filePath, content);
+      vscode.window.showInformationMessage("添加成功");
+      initTree && initTree();
+    } else {
+      vscode.window.showErrorMessage("添加失败，已经存在相同名称");
+    }
+  });
 }
-function clickTemplateHandel(params) {}
+/**
+ * 拿到文件名 打开文件文件 可修改可保存
+ * @param {*} params
+ */
+function clickTemplateHandel(params) {
+  let FolderTemplatePath = path.resolve(RootPath, params.fileName);
+  console.log(FolderTemplatePath, "打开的文件");
+  // 打开 window上传文件弹窗
+  vscode.commands.executeCommand("vscode.open", vscode.Uri.file(FolderTemplatePath)).then(
+    (res) => {},
+    (regject) => {
+      vscode.window.showErrorMessage("文件打开失败");
+    }
+  );
+}
 
 async function pageTemplateDelete(initTree) {
-  let templatePath =RootPath
-  let deletes = vscode.commands.registerCommand("FolderView.item.delete", async (arg) => {
+  let templatePath = RootPath;
+  vscode.commands.registerCommand("templateFolder.item.delete", async (arg) => {
     let filePath = path.resolve(templatePath, arg.command.arguments[0].fileName);
     try {
       unlink(filePath);
-      vscode.window.showErrorMessage("删除模板成功");
+      vscode.window.showInformationMessage("删除模板成功");
       initTree && initTree();
     } catch (error) {
       vscode.window.showErrorMessage("删除模板失败");
+    }
+  });
+}
+async function pageTemplateReName(initTree) {
+  let templatePath = RootPath;
+  vscode.commands.registerCommand("templateFolder.item.rename", async (arg) => {
+    let filePath = path.resolve(templatePath, arg.command.arguments[0].fileName);
+    let newName = await vscode.window.showInputBox({
+      placeHolder: "请输入新的文件名称",
+    });
+    if (!newName) return false;
+    newName += ".js";
+    try {
+      const newPath = path.resolve(templatePath, newName);
+      rename(filePath, newPath);
+      vscode.window.showInformationMessage("重命名成功");
+      initTree && initTree();
+    } catch (error) {
+      vscode.window.showErrorMessage("重命名失败");
+    }
+  });
+}
+async function pageTemplateCopy(initTree) {
+  vscode.commands.registerCommand("templateFolder.item.copy", async (arg) => {
+    let filePath = path.resolve(RootPath, arg.command.arguments[0].fileName);
+    let newPath = path.resolve(RootPath, arg.id + "_copy.js");
+    try {
+      copyFile(filePath, newPath);
+      vscode.window.showInformationMessage("复制成功");
+      initTree && initTree();
+    } catch (error) {
+      vscode.window.showErrorMessage("复制失败");
     }
   });
 }
@@ -92,10 +157,8 @@ class FolderView {
     this.initTree();
     pageTemplateAdd(this.initTree);
     pageTemplateDelete(this.initTree);
-    vscode.commands.registerCommand("pageTemplate.refresh", (arg) => {
-      console.log("刷新了");
-      this.initTree();
-    });
+    pageTemplateReName(this.initTree);
+    pageTemplateCopy(this.initTree);
   }
   initTree() {
     const registerData = createRegisterData(clickTemplateHandel);

@@ -78,7 +78,7 @@
       },
       {
         "command": "pageTemplate.add",
-        "title": "添加模板"
+        "title": "添加代码模板"
       },
       {
         "command": "pageTemplate.refresh",
@@ -97,17 +97,37 @@
         }
       },
       {
-        "command": "FolderView.item.delete",
+        "command": "templateFolder.add",
+        "title": "添加文件夹模板"
+      },
+      {
+        "command": "templateFolder.item.delete",
         "title": "删除文件夹",
         "icon": {
           "light": "./static/svg/delete.svg",
           "dark": "./static/svg/delete.svg"
         }
+      },
+      {
+        "command": "templateFolder.item.copy",
+        "title": "复制",
+        "icon": {
+          "light": "./static/svg/copy.svg",
+          "dark": "./static/svg/copy.svg"
+        }
+      },
+      {
+        "command": "templateFolder.item.rename",
+        "title": "重命名",
+        "icon": {
+          "light": "./static/svg/rename.svg",
+          "dark": "./static/svg/rename.svg"
+        }
       }
     ],
     "keybindings": [
       {
-        "command": "template-code.collectCodeSnippet",
+        "command": "FolderView.add",
         "key": "ctrl+q",
         "mac": "ctrl+q",
         "when": "editorTextFocus"
@@ -134,8 +154,18 @@
           "group": "inline"
         },
         {
-          "command": "FolderView.item.delete",
-          "when": "view ==FolderView",
+          "command": "templateFolder.item.delete",
+          "when": "view == templateFolder",
+          "group": "inline"
+        },
+        {
+          "command": "templateFolder.item.copy",
+          "when": "view == templateFolder",
+          "group": "inline"
+        },
+        {
+          "command": "templateFolder.item.rename",
+          "when": "view == templateFolder",
           "group": "inline"
         }
       ],
@@ -154,6 +184,11 @@
           "when": "editorFocus",
           "command": "pageTemplate.add",
           "group": "navigation"
+        },
+        {
+          "when": "editorFocus",
+          "command": "templateFolder.add",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -168,7 +203,7 @@
       "properties": {
         "shared.webhook": {
           "type": "string",
-          "default": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6d3ec4c8-6e80-46d5-bb78-b593496cdf11",
+          "default": "",
           "description": "webhook地址"
         },
         "shared.sharedType": {

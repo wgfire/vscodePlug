@@ -13,7 +13,7 @@ const { TreeReview } = require("./module/TreeReview");
 
 function activate(context) {
   console.log('Congratulations, your extension "template-code" is now active!');
-  rootResolvePath("template-folder.js"); // 判断是否已经有了模板文件
+ // rootResolvePath("template-folder.js"); // 判断是否已经有了模板文件
   console.log(vscode.workspace.rootPath, "根目录地址", vscode.workspace.workspaceFolders[0]);
 
   review(context);
@@ -31,7 +31,7 @@ function activate(context) {
 
   new TestView(context);
   new TreeReview(context);
-  // new FolderView(context)
+  new FolderView(context)
   context.subscriptions.push(disposableCreateFile);
   context.subscriptions.push(collectCodeSnippet);
   context.subscriptions.push(disposableClear);

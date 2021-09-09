@@ -1,22 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const templateFile = path.resolve(__dirname, "template");
-
-const treeItem = {
-  label: "表单组件",
-  id: "form",
-  command: {
-    command: "pageTemplate.form",
-    title: "表单组件",
-    arguments: [
-      {
-        content: "",
-        fileName: "test",
-      },
-    ],
-  },
-  collapsible: "None",
-};
+  
 
 const TreeDate = function () {
   let data = createTreeData();
