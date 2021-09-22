@@ -2,12 +2,12 @@
  * 清空console 和 debugger
  */
 const { writeFileSync } = require("fs");
+const { window } = require("vscode");
+const { getFile } = require("../utils/fs");
 
-const clearCd = (editor) => {
-  // 获取用户文本内容
-  console.log(editor, "文本内容");
-  let Text = editor.document.getText();
-  const reg = /(console\.log(.*);?)|(debugger\S*)/g;
+const clearCd = (fileName) => {
+  const Text = getFile(fileName);
+  const reg = /(console\.log(.*)\s?;?)|(debugger.*)/g;
   const lines = Text.split("\n");
   const handledLines = [];
   // 逐行删除console和debugger
@@ -18,9 +18,10 @@ const clearCd = (editor) => {
   }
 
   let handledContent = handledLines.join("\n");
-  console.log(handledContent, "清空的", editor.document.fileName);
+  // console.log(handledContent, "清空的", fileName);
   //  vscode.workspace.fs.writeFile(vscode.Uri.file(editor.document.fileName), strUtils.stringToUint8Array(handledContent));
-  if (Text != handledContent) writeFileSync(editor.document.fileName, handledContent, { encoding: "utf-8" });
+  if (Text != handledContent) writeFileSync(fileName, handledContent, { encoding: "utf-8" });
+  window.showInformationMessage('清除成功')
 };
 
 module.exports = clearCd;

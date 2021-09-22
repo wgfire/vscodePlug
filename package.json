@@ -2,7 +2,7 @@
   "name": "apop-code",
   "displayName": "apop-code",
   "description": "一锅粥",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/wgfire/vscodePlug"
@@ -63,6 +63,10 @@
       {
         "command": "template-code.clearCD",
         "title": "🤓清空console/debugger"
+      },
+      {
+        "command": "template-code.clearFileCD",
+        "title": "清空子文件里的console/debugger"
       },
       {
         "command": "template-code.createFilePath",
@@ -194,6 +198,10 @@
       "explorer/context": [
         {
           "command": "template-code.createFilePath",
+          "group": "navigation"
+        },
+        {
+          "command": "template-code.clearFileCD",
           "group": "navigation"
         }
       ]
