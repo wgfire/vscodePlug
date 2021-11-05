@@ -110,7 +110,6 @@ class Decoration {
         const startPos = doc.positionAt(match.index + 1);
         let endLength = match.index + match[0].length;
         empty = false;
-      
 
         const endPos = doc.positionAt(endLength);
 
@@ -144,13 +143,20 @@ class Decoration {
     this.reviewDecoration.sort((a, b) => {
       return a.decoration.range._start._line - b.decoration.range._start._line;
     });
-
+    
+  
     let tempArray = [];
-    // 以两两为一组
+    let errorArray = []
+    // // 以两两为一组
     for (let index = 0; index < this.reviewDecoration.length; index += 2) {
       const element = this.reviewDecoration[index];
-
       const next = this.reviewDecoration[index + 1];
+      const isPerf =   next.decoration.range._start._line -element.decoration.range._start._line ===1 
+      if(!isPerf) {
+        this.reviewDecoration.splice(index,1)
+        index-=2
+        continue
+      }
 
       const tempObj = {
         type: element.type,
@@ -161,6 +167,7 @@ class Decoration {
       tempArray.push(tempObj);
     }
     this.reviewDecoration = tempArray;
+    console.log("排序好的数组",tempArray);
     return tempArray;
   }
 
@@ -175,6 +182,35 @@ class Decoration {
     this.updateTreeReview(tempArray);
   }
 
+  findActiveData() {
+    try {
+      const starts = this.activeLine._start._line;
+      let index = this.reviewDecoration.findIndex((el) => {
+        let start = el.decoration[0].range._start._line;
+        let end = el.decoration[1].range._end._line;
+        return start <= starts && starts <= end;
+      });
+
+      return index;
+    } catch (error) {}
+  }
+
+  clearDecorationToData() {
+     let index = this.findActiveData();
+    this.reviewDecoration = [];
+    // TODO 清空当前的review范围，当前是多个review都会被清空一次
+    this.decorationList.forEach((el) => {
+      this.editor.setDecorations(el, []);
+    });
+    this.decorationList = [];
+  }
+
+  dispose() {
+    this.reviewDecoration.forEach((el) => {
+      el.dispose();
+    });
+  }
+  
   updateTreeReview(tempArray) {
     // @ts-ignore
     const Tree = require("../TreeReview/reviewData.json");
@@ -201,42 +237,14 @@ class Decoration {
         Tree[fileName] = {
           filePath: filePath,
           reviewNum: 1,
-          rootPath:rootPath
+          rootPath: rootPath,
         };
       }
     }
-    console.log("生成的tree", Tree);
+    console.log("生成的ReviewTree", Tree);
     writeFile(path.resolve(__dirname, "../TreeReview/reviewData.json"), JSON.stringify(Tree));
     this.TreeRivew.initTree();
   }
 
-  findActiveData() {
-    try {
-      const starts = this.activeLine._start._line;
-      let index = this.reviewDecoration.findIndex((el) => {
-        let start = el.decoration[0].range._start._line;
-        let end = el.decoration[1].range._end._line;
-        return start <= starts && starts <= end;
-      });
-
-      return index;
-    } catch (error) {}
-  }
-
-  clearDecorationToData() {
-    // let index = this.findActiveData();
-    this.reviewDecoration = [];
-    // TODO 清空当前的review范围，当前是多个review都会被清空一次
-    this.decorationList.forEach((el) => {
-      this.editor.setDecorations(el, []);
-    });
-    this.decorationList = [];
-  }
-
-  dispose() {
-    this.reviewDecoration.forEach((el) => {
-      el.dispose();
-    });
-  }
 }
 module.exports = Decoration;

@@ -1,17 +1,14 @@
 const vscode = require("vscode");
-const path = require("path");
-const fs = require("fs");
-
 const { nodeWithIdTreeDataProvider, createRegisterData } = require("./componentProvider");
-const { getFile, writeFile, unlink } = require("../../utils/fs");
 const { registrationCommand } = require("../../utils/common");
 
 /**
- * 获取到地址，然后打开文件
+ * 获取到地址，然后利用新窗口打开文件
  */
 async function clickTemplateHandel(params) {
   console.log("点击了review列表", params);
 
+  // vscode.commands.executeCommand() 执行内置命令
   vscode.workspace.openTextDocument(vscode.Uri.file(params.filePath)).then(
     (res) => {
       vscode.window.showTextDocument(res);

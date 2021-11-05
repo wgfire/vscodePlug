@@ -11,12 +11,10 @@ const reviewCommand = vscode.commands.registerCommand("review.click.item", (arg)
 });
 function provideCompletionItems(document, position, context) {
   const line = document.lineAt(position);
-  //const projectPath = util.getProjectPath(document);
 
   // 只截取到光标位置为止，防止一些特殊情况
   const lineText = line.text.substring(0, position.character);
-  // 简单匹配，只要当前光标前的字符串为`this.dependencies.`都自动带出所有的依赖
-  if (/\*@reviewType\.$/g.test(lineText)) {
+  if (/.*@reviewType\.$/g.test(lineText)) {
     console.log("字符串注册", lineText);
     //const json = require(`${projectPath}/package.json`);
     const dependencies = ["Perf", "Format", "Bug"]; //Object.keys(json.dependencies || {}).concat(Object.keys(json.devDependencies || {}));
@@ -27,7 +25,7 @@ function provideCompletionItems(document, position, context) {
       let Com = new vscode.CompletionItem(dep, vscode.CompletionItemKind.Field);
       Com.command = {
         command: "review.click.item",
-        title: "xx",
+        title: "review Type",
       };
       return Com;
     });

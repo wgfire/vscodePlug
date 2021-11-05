@@ -1,8 +1,8 @@
 {
   "@review": {
-    "scope": "javascript,typescript,css,scss,typescriptreact,vue",
+    "scope": "javascript,typescript,typescriptreact,vue,css,scss,less",
     "prefix": "@review",
-    "body": ["/**", "*@reviewType.Perf", "*@reviewContent Buy 王港", "1.", "*/"],
+    "body": ["/** $CURRENT_YEAR年/$CURRENT_MONTH_NAME/$CURRENT_DATE日/$CURRENT_DAY_NAME", "*@reviewType.Perf", "*@reviewContent By Name", "1.","*/"],
     "description": "review template"
   }
 }
