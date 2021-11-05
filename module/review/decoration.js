@@ -65,7 +65,6 @@ class Decoration {
       this.activeLine = e.contentChanges[0].range;
       console.log(this.activeLine, "当前操作行");
       this.triggerUpdateDecorations();
-      //this.DecNumber();
     });
   }
 
@@ -81,8 +80,6 @@ class Decoration {
     }, 20);
   }
   Decoration() {
-    this.init();
-    // this.findContentBuyStart();
     this.findEditeContent();
     this.setDecorationToData();
   }
@@ -143,21 +140,18 @@ class Decoration {
     this.reviewDecoration.sort((a, b) => {
       return a.decoration.range._start._line - b.decoration.range._start._line;
     });
-    
-  
+
     let tempArray = [];
-    let errorArray = []
     // // 以两两为一组
-    for (let index = 0; index < this.reviewDecoration.length; index += 2) {
+    for (let index = 0; index < this.reviewDecoration.length; index ++) {
+     try {
       const element = this.reviewDecoration[index];
       const next = this.reviewDecoration[index + 1];
+      if(!next) break;
       const isPerf =   next.decoration.range._start._line -element.decoration.range._start._line ===1 
-      if(!isPerf) {
-        this.reviewDecoration.splice(index,1)
-        index-=2
-        continue
+      if(isPerf) {
+        this.reviewDecoration.splice(index+1,1)
       }
-
       const tempObj = {
         type: element.type,
         decoration: [element.decoration, next.decoration],
@@ -165,9 +159,11 @@ class Decoration {
       };
       this.decorationList.push(tempObj.decorationType);
       tempArray.push(tempObj);
+     } catch (error) {
+       console.log(error,'错误');
+     }
     }
     this.reviewDecoration = tempArray;
-    console.log("排序好的数组",tempArray);
     return tempArray;
   }
 
@@ -176,27 +172,10 @@ class Decoration {
     tempArray.forEach((el) => {
       this.editor.setDecorations(el.decorationType, el.decoration);
     });
-
-    console.log(tempArray, "渲染数组");
-
     this.updateTreeReview(tempArray);
   }
 
-  findActiveData() {
-    try {
-      const starts = this.activeLine._start._line;
-      let index = this.reviewDecoration.findIndex((el) => {
-        let start = el.decoration[0].range._start._line;
-        let end = el.decoration[1].range._end._line;
-        return start <= starts && starts <= end;
-      });
-
-      return index;
-    } catch (error) {}
-  }
-
   clearDecorationToData() {
-     let index = this.findActiveData();
     this.reviewDecoration = [];
     // TODO 清空当前的review范围，当前是多个review都会被清空一次
     this.decorationList.forEach((el) => {
