@@ -80,6 +80,7 @@ class Decoration {
     }, 20);
   }
   Decoration() {
+    this.init();
     this.findEditeContent();
     this.setDecorationToData();
   }
@@ -150,7 +151,13 @@ class Decoration {
       if(!next) break;
       const isPerf =   next.decoration.range._start._line -element.decoration.range._start._line ===1 
       if(isPerf) {
+        // 如果有匹配到那么就移除下一个 直接跳到第二个
         this.reviewDecoration.splice(index+1,1)
+      }else {
+        // 没有就需要吧当前元素也给删除了，并且减少索引
+        this.reviewDecoration.splice(index,1)
+        index--
+        continue
       }
       const tempObj = {
         type: element.type,
@@ -163,7 +170,7 @@ class Decoration {
        console.log(error,'错误');
      }
     }
-    this.reviewDecoration = tempArray;
+   //  this.reviewDecoration = tempArray;
     return tempArray;
   }
 
