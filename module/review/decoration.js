@@ -45,16 +45,10 @@ class Decoration {
     this.reviewDecoration = []; // 为review类型添加颜色
     this.actionType = ""; // 当前操作是更新已有的 还是新增 /删除
     this.activeReview = {}; // 当前操作的行 所拿到的这个review数据  ｛｝|| undefiend
-
-    this.reviewContent = []; // @ReviewContent内容添加颜色
     this.decorationList = [];
-    this.editor && this.reviewContent.push(this.editor.document.fileName);
     this.status = false;
-    console.log(this.reviewContent, "当前文件列表");
     window.onDidChangeActiveTextEditor(() => {
       this.editor = window.activeTextEditor;
-      this.reviewContent = [...new Set(this.reviewContent), this.editor.document.fileName];
-      console.log(this.reviewContent, "多个文件");
       this.triggerUpdateDecorations();
     });
 
@@ -63,7 +57,6 @@ class Decoration {
     });
     workspace.onDidChangeTextDocument((e) => {
       this.activeLine = e.contentChanges[0].range;
-      console.log(this.activeLine, "当前操作行");
       this.triggerUpdateDecorations();
     });
   }
@@ -184,7 +177,6 @@ class Decoration {
 
   clearDecorationToData() {
     this.reviewDecoration = [];
-    // TODO 清空当前的review范围，当前是多个review都会被清空一次
     this.decorationList.forEach((el) => {
       this.editor.setDecorations(el, []);
     });

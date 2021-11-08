@@ -1,85 +1,22 @@
-import React, { Component } from 'react';
-import styles from './index.less';
-import { Input } from 'antd';
-import api from '../../config/api';
-import apiFetch from '../../utils/apiFetch';
-import { inject, observer } from 'mobx-react';
-import { Modal } from 'antd';
-import { CaptchaModal } from '../common/CaptchaModal';
-import classNames from 'classnames';
+import React, { useEffect } from "react";
+import { WebView, Image } from "@tarojs/components";
+import { useRouter, setNavigationBarTitle } from "@tarojs/taro";
+import { getFileTypeFromExtension } from "src/lib/utils/common";
+import { usePageStayDuration } from "src/hooks/usePageStayDuration";
+import "./index.module.scss";
+import { PageView } from "src/lib/components/layout/PageView";
+import { useTracker } from "src/hooks/useTracker";
 
-@inject('formValues')
-@observer
-class SMSInput extends Component {
-  state = {
-    times: 0,
-    visible: false
-  };
-
-  onChange = e => {
-    this.props.changeValue(e.target.value);
-  };
-
-  closeModal = () => this.setState({ visible: false });
-
-  openModal = () => this.setState({ visible: true });
-
-  sendSms = (code,validate_type) => {
-    let { formValues } = this.props;
-    let id = formValues.hasKeyObj.admin_mobile;
-    let admin_mobile = formValues.data[id];
-
-    let message = formValues.validate(admin_mobile, id);
-    if (message) return;
-
-    if (this.state.times > 0) {
-      return;
-    }
-    this.setState({ times: 60 });
-    return apiFetch(api.getDynamicPwd, { mobile: admin_mobile, type: 'register', code,validate_type })
-      .then(data => {
-        let timer = setInterval(() => {
-          if (this.state.times <= 1) {
-            clearInterval(timer);
-          }
-          this.setState({ times: this.state.times - 1 });
-        }, 1000);
-      })
-      .catch(e => {
-        if (e.errcode === '10028') {
-          this.setState({ times: 0 });
-          Modal.error({
-            content: '短信业务繁忙，请稍后重试！'
-          });
-        } else {
-          this.setState({ times: 0 });
-          Modal.error({
-            content: e.msg
-          });
-        }
-      });
-  };
-
-  render() {
-    let { times, visible } = this.state;
-    let { value, error } = this.props;
-
-    let button = (
-      <span onClick={this.openModal} className={classNames(styles.button,{
-        [styles.disable]:times!==0
-      }) }>
-        {times === 0 ? '发送短信' : `${times}秒`}
-      </span>
-    );
-    return (
-      <div>
-        <Input addonAfter={button} className={error ? 'error' : ''} value={value} onChange={this.onChange} />
-        <CaptchaModal visible={visible} onClose={this.closeModal} onOk={this.sendSms} />
-      </div>
-    );
-  }
-}
-
-SMSInput.propTypes = {};
-
-export default SMSInput;
+export default React.memo(() => {
+    const { params } = useRouter();
+    const link = decodeURIComponent(params.link!) as Link;
+    return  (
+        <PageView>
+            <PageView.ScrollContent >
+                <PageView.Content>
+                    <Image style={{ width: "100%" }} mode="widthFix" src={link}></Image>
+                </PageView.Content>
+            </PageView.ScrollContent>
+        </PageView>
+    ) 
+});
