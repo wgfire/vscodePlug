@@ -7,7 +7,6 @@ const path = require("path");
  * @returns
  */
 function registrationCommand(arg) {
-  console.log(arg, "arg");
   if (!Array.isArray(arg)) throw new Error("请传入数组");
   let register = arg;
   register.forEach((el) => {
@@ -15,7 +14,6 @@ function registrationCommand(arg) {
     try {
       vscode.commands.getCommands(false).then((res) => {
         let isregister = res.includes(key);
-        console.log(isregister, "是否注册");
         if (isregister) return true;
         if (isregister === false) {
           let result = vscode.commands.registerCommand(key, el[key]);
@@ -23,9 +21,9 @@ function registrationCommand(arg) {
         }
       });
     } catch (error) {
-      console.log(error,'注册命令失败');
     }
   });
+
   return register;
 }
 
