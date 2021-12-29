@@ -2,7 +2,7 @@
   "name": "apop-code",
   "displayName": "apop-code",
   "description": "日常小工具合集",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/wgfire/vscodePlug"
@@ -39,6 +39,10 @@
     "views": {
       "money": [
         {
+          "id": "templateFolder",
+          "name": "文件夹模板"
+        },
+        {
           "id": "pageTemplate",
           "name": "记忆模板",
           "icon": "./static/svg/money.svg"
@@ -46,10 +50,6 @@
         {
           "id": "reviewHistory",
           "name": "review列表"
-        },
-        {
-          "id": "templateFolder",
-          "name": "文件夹模板"
         }
       ]
     },
@@ -94,7 +94,15 @@
       },
       {
         "command": "pageTemplate.refresh",
-        "title": "刷新",
+        "title": "刷新文件",
+        "icon": {
+          "light": "./static/svg/money.svg",
+          "dark": "./static/svg/money.svg"
+        }
+      },
+      {
+        "command": "pageTemplate.refreshFolder",
+        "title": "刷新文件夹",
         "icon": {
           "light": "./static/svg/money.svg",
           "dark": "./static/svg/money.svg"
@@ -156,6 +164,11 @@
         {
           "command": "pageTemplate.refresh",
           "when": "view ==pageTemplate",
+          "group": "navigation"
+        },
+        {
+          "command": "pageTemplate.refreshFolder",
+          "when": "view ==templateFolder",
           "group": "navigation"
         }
       ],

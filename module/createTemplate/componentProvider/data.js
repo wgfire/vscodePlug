@@ -1,9 +1,10 @@
 const fs = require("fs");
 const path = require("path");
-const templateFile = path.resolve(__dirname, "template");
-  
+const { getRootPath } = require("../../../utils/common");
+const vscode = require("vscode");
+const templateFile = path.resolve(getRootPath(), ".vscode",'folderTemplate');   //path.resolve(__dirname, "template");
 
-const TreeDate = function () {
+const TreeDate = function () {               
   let data = createTreeData();
   return data;
 };

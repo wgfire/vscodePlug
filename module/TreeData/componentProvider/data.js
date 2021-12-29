@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const templateFile = path.resolve(__dirname, "template");
+const { workspace } = require("vscode");
+const templateFile = path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode",'fileTemplate');  //path.resolve(__dirname, "template");
 
 const treeItem = {
   label: "表单组件",

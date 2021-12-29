@@ -4,36 +4,16 @@ const fs = require("fs");
 const path = require("path");
 const strUtils = require("../../utils/string");
 const regular = require("../../utils/Regular");
-const { registrationCommand } = require("../../utils/common");
+const { registrationCommand ,rootResolvePath} = require("../../utils/common");
 const { createRegisterData, nodeWithIdTreeDataProvider } = require("./componentProvider");
 const { unlink, getFile, writeFile, rename, copyFile } = require("../../utils/fs");
-const { rejects } = require("assert");
-const RootPath = path.resolve(__dirname, "componentProvider", "template"); //path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode");  //path.resolve(__dirname, "componentProvider", "template");
+const RootPath = path.resolve(workspace.workspaceFolders[0].uri.fsPath, ".vscode",'folderTemplate');  //path.resolve(__dirname, "componentProvider", "template");
 const templateFolderPath = path.resolve(__dirname, "../../template", "template-folder.js"); // 默认的模板路径 存在插件 写入客户端
 /**
  */
-async function rootResolvePath(fileName = "template-folder.js") {
-  /**返回.vscode里对应的文件路径
-   * 1.判断vscode是否有这文件夹，里面是否有文件
-   * */
-  let templatePathUri = vscode.Uri.file(RootPath + "/" + fileName); // 写入的文件路径
-  let enable = fs.existsSync(RootPath);
-  const document = await vscode.workspace.openTextDocument(templateFolderPath);
-  // 没有的话创建模板文件夹
-  console.log(enable, "创建了.vscode嘛");
-  if (!enable) {
-    await vscode.workspace.fs.createDirectory(vscode.Uri.file(`${RootPath}`));
-    // 创建模板文件
-    vscode.workspace.fs.writeFile(templatePathUri, strUtils.stringToUint8Array(document.getText()));
-  } else {
-    // 是否有模板文件
-    let isTemplate = fs.existsSync(path.resolve(RootPath, "template-folder.js"));
-    console.log("有内置模板文件嘛", isTemplate);
-    if (!isTemplate) {
-      vscode.workspace.fs.writeFile(templatePathUri, strUtils.stringToUint8Array(document.getText()));
-    }
-  }
-  return enable;
+async function rootResolvePathFolder(fn) {
+  await rootResolvePath(RootPath,'reactBase.js',templateFolderPath)
+  fn()
 }
 
 async function createTemplateFile(uri) {
@@ -159,8 +139,12 @@ class FolderView {
     pageTemplateDelete(this.initTree);
     pageTemplateReName(this.initTree);
     pageTemplateCopy(this.initTree);
+    vscode.commands.registerCommand("pageTemplate.refreshFolder", (arg) => {
+      this.initTree();
+    });
   }
   initTree() {
+    console.log('初始化');
     const registerData = createRegisterData(clickTemplateHandel);
     registrationCommand(registerData);
     vscode.window.createTreeView("templateFolder", { treeDataProvider: nodeWithIdTreeDataProvider(), showCollapseAll: true });
@@ -169,6 +153,6 @@ class FolderView {
 
 module.exports = {
   FolderView,
-  rootResolvePath,
+  rootResolvePathFolder,
   createTemplateFile,
 };

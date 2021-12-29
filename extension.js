@@ -2,10 +2,10 @@
 //  registerCommand   registerTextEditorCommand 的区别  后者必须要打开一个文件后 执行才会有回调
 const vscode = require("vscode");
 const shareCode = require("./module/shareCode");
-const { rootResolvePath, createTemplateFile, FolderView } = require("./module/createTemplate/index");
+const { rootResolvePathFolder, createTemplateFile, FolderView } = require("./module/createTemplate/index");
 const review = require("./module/review/index");
-const clearCd = require("./module/clearCD");
-const { TestView } = require("./module/TreeData");
+const clearCd = require("./module/clearCD");     
+const { TestView, rootResolvePathFile } = require("./module/TreeData");
 const { TreeReview } = require("./module/TreeReview");
 const clearFileCD = require("./module/clearFileCD");
 /**
@@ -14,8 +14,13 @@ const clearFileCD = require("./module/clearFileCD");
 
 function activate(context) {
   console.log('Congratulations, your extension "template-code" is now active!');
-  // rootResolvePath("template-folder.js"); // 判断是否已经有了模板文件
-  console.log(vscode.workspace.rootPath, "根目录地址", vscode.workspace.workspaceFolders[0]);
+  rootResolvePathFolder(()=>{
+    new FolderView(context);
+  }); // 判断是否已经有了模板文件
+  rootResolvePathFile(()=>{
+    new TestView(context);
+  })// 判断是否已经有了模板文件
+  // console.log(vscode.workspace.rootPath, "根目录地址", vscode.workspace.workspaceFolders[0], vscode.window.activeTextEditor);
 
   review(context);
 
@@ -35,9 +40,9 @@ function activate(context) {
     clearFileCD(textEditor._fsPath);
   });
 
-  new TestView(context);
+
   new TreeReview(context);
-  new FolderView(context);
+
   context.subscriptions.push(disposableCreateFile);
   context.subscriptions.push(collectCodeSnippet);
   context.subscriptions.push(disposableClear);

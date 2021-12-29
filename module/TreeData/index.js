@@ -4,8 +4,13 @@ const fs = require("fs");
 
 const { nodeWithIdTreeDataProvider, createRegisterData } = require("./componentProvider");
 const { getFile, writeFile, unlink } = require("../../utils/fs");
-const { registrationCommand, getRangText } = require("../../utils/common");
-const templatePath = path.resolve(__dirname, "componentProvider/template");
+const { registrationCommand, getRangText, rootResolvePath } = require("../../utils/common");
+const RootPath = path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, ".vscode",'fileTemplate'); //path.resolve(__dirname, "componentProvider/template");
+const templateFilePath = path.resolve(__dirname, "../../template", "template-file.txt");
+async function  rootResolvePathFile (fn) {
+ await rootResolvePath(RootPath,'fileBase.txt',templateFilePath)
+ fn()
+}
 
 const suffix = ".txt";
 
@@ -17,7 +22,7 @@ async function pageTemplateAdd(initTree) {
     });
     if (!fileName || !content) return false;
     fileName += suffix;
-    let filePath = path.resolve(templatePath, fileName);
+    let filePath = path.resolve(RootPath, fileName);
     let isTemplate = fs.existsSync(filePath);
     if (!isTemplate) {
       writeFile(filePath, content);
@@ -30,7 +35,7 @@ async function pageTemplateAdd(initTree) {
 }
 async function pageTemplateDelete(initTree) {
   let deletes = vscode.commands.registerCommand("pageTemplate.item.delete", async (arg) => {
-    let filePath = path.resolve(templatePath, arg.command.arguments[0].fileName);
+    let filePath = path.resolve(RootPath, arg.command.arguments[0].fileName);
     try {
       unlink(filePath);
       vscode.window.showErrorMessage("删除模板成功");
@@ -47,7 +52,7 @@ async function clickTemplateHandel(params) {
   try {
     // params.fileName += ".txt";
     let writePath = vscode.window.activeTextEditor.document.fileName;
-    let getFilePath = path.resolve(templatePath, params.fileName);
+    let getFilePath = path.resolve(RootPath, params.fileName);
     writeFile(writePath, getFile(getFilePath));
   } catch (error) {
     vscode.window.showErrorMessage("写入失败，请检查模板文件是否存在");
@@ -74,4 +79,5 @@ class TestView {
 
 module.exports = {
   TestView,
+  rootResolvePathFile
 };

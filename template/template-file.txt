@@ -1,0 +1,22 @@
+import React, { useEffect } from "react";
+import { WebView, Image } from "@tarojs/components";
+import { useRouter, setNavigationBarTitle } from "@tarojs/taro";
+import { getFileTypeFromExtension } from "src/lib/utils/common";
+import { usePageStayDuration } from "src/hooks/usePageStayDuration";
+import "./index.module.scss";
+import { PageView } from "src/lib/components/layout/PageView";
+import { useTracker } from "src/hooks/useTracker";
+
+export default React.memo(() => {
+    const { params } = useRouter();
+    const link = decodeURIComponent(params.link!) as Link;
+    return  (
+        <PageView>
+            <PageView.ScrollContent >
+                <PageView.Content>
+                    <Image style={{ width: "100%" }} mode="widthFix" src={link}></Image>
+                </PageView.Content>
+            </PageView.ScrollContent>
+        </PageView>
+    ) 
+});

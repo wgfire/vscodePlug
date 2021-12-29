@@ -15,18 +15,10 @@ const createScssFile = (ComponentName) => {
       } 
     `;
 };
-const createIndexFile = (ComponentName) => {
-  return `
-     import index from './${ComponentName}'
-     
-     export default index
-    `;
-};
 
 module.exports = (ComponentName) => {
   return {
     [`${ComponentName}.tsx`]: createJxsFile(ComponentName),
-    [`${ComponentName}.scss`]: createScssFile(ComponentName),
-    [`index.js`]: createIndexFile(ComponentName),
+    [`${"index.module"}.less`]: createScssFile(ComponentName),
   };
 };
