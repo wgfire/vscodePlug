@@ -7,6 +7,7 @@ const review = require("./module/review/index");
 const clearCd = require("./module/clearCD");
 const { TestView } = require("./module/TreeData");
 const { TreeReview } = require("./module/TreeReview");
+const stylesClass = require("./module/classNames");
 const clearFileCD = require("./module/clearFileCD");
 /**
  * @param {vscode.ExtensionContext} context
@@ -34,6 +35,9 @@ function activate(context) {
     console.log(textEditor, edit, "对象");
     clearFileCD(textEditor._fsPath);
   });
+  let classNames = vscode.commands.registerCommand("classNames", (textEditor, edit) => {
+    stylesClass(textEditor);
+  });
 
   new TestView(context);
   new TreeReview(context);
@@ -42,6 +46,7 @@ function activate(context) {
   context.subscriptions.push(collectCodeSnippet);
   context.subscriptions.push(disposableClear);
   context.subscriptions.push(disposableClearFile);
+  context.subscriptions.push(classNames);
 }
 
 // this method is called when your extension is deactivated

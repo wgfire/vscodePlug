@@ -135,6 +135,10 @@
           "light": "./static/svg/rename.svg",
           "dark": "./static/svg/rename.svg"
         }
+      },
+      {
+        "command": "classNames",
+        "title": "class->styles.class"
       }
     ],
     "keybindings": [
@@ -185,6 +189,11 @@
         {
           "when": "editorFocus",
           "command": "template-code.clearCD",
+          "group": "navigation"
+        },
+        {
+          "when": "editorFocus",
+          "command": "classNames",
           "group": "navigation"
         },
         {
