@@ -2,7 +2,7 @@
   "name": "apop-code",
   "displayName": "apop-code",
   "description": "日常小工具合集",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/wgfire/vscodePlug"
